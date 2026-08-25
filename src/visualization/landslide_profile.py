@@ -1,8 +1,10 @@
 """Idealized Landslide Slope Profile showing exact spatial and depth distribution."""
 
+from pathlib import Path
 from typing import Dict, Tuple
 
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 
 # Geomorphological Sectors, Spatial Distance X [m], Elevation Z [m], Depth [cm], and Label
@@ -20,8 +22,6 @@ SAMPLE_SLOPE_SPECS: Dict[str, Tuple[float, float, str, str, str]] = {
     "ML1": (108.0, 36.0, "Steep Slope Sector", "Surface (0 cm)", "5a (0 cm)"),
     # Sector: Undisturbed Basal Outcrop
     "ML10": (317.0, 10.0, "Undisturbed Basal Clay", "Surface (0 cm)", "6a (0 cm)"),
-    # Outgroup
-    "Sand_R": (340.0, 8.0, "Archie Sand Reference", "Lab Benchmark", "Sand_R"),
 }
 
 SECTOR_COLORS: Dict[str, str] = {
@@ -29,20 +29,46 @@ SECTOR_COLORS: Dict[str, str] = {
     "Counterslope Sector": "rgb(255, 127, 14)",
     "Steep Slope Sector": "rgb(44, 160, 44)",
     "Undisturbed Basal Clay": "rgb(31, 119, 180)",
-    "Archie Sand Reference": "rgb(148, 103, 189)",
 }
+
+TOPO_DIR = Path("projects/Hyprop_geotom_01Carl/data/raw/topography")
+
+
+def carica_punti_topografia() -> Tuple[np.ndarray, np.ndarray]:
+    """Carica i punti (X, Z) del profilo topografico da file se presente, o usa i nodi rilevati."""
+    # Controlla se esiste un file topografia dedicato con coordinate X, Z
+    for fn in ["profilo_topografia.csv", "topografia.csv", "profilo.xlsx", "profilo.csv"]:
+        f_path = TOPO_DIR / fn
+        if f_path.exists():
+            try:
+                if f_path.suffix == ".xlsx":
+                    df = pd.read_excel(f_path, sheet_name=0)
+                else:
+                    df = pd.read_csv(f_path)
+                if df.shape[1] >= 2:
+                    x = pd.to_numeric(df.iloc[:, 0], errors="coerce").dropna().to_numpy()
+                    z = pd.to_numeric(df.iloc[:, 1], errors="coerce").dropna().to_numpy()
+                    if len(x) >= 2 and len(x) == len(z):
+                        return x, z
+            except Exception:
+                pass
+
+    # Nodi rilevati lungo il profilo di 350 metri
+    x_topo = np.array([0, 10, 25, 36, 50, 72, 85, 93, 108, 120, 150, 200, 260, 317, 345])
+    z_topo = np.array([100, 95, 88, 82, 77, 73, 62, 52, 36, 25, 20, 15, 12, 10, 8])
+    return x_topo, z_topo
 
 
 def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
     """Generates an idealized landslide topographic profile highlighting position and depth."""
     fig = go.Figure()
 
-    # 1. Topography curve based on profile survey coordinates
-    x_topo = np.array([0, 10, 25, 36, 50, 72, 85, 93, 108, 120, 150, 200, 260, 317, 345])
-    z_topo = np.array([100, 95, 88, 82, 77, 73, 62, 52, 36, 25, 20, 15, 12, 10, 8])
+    # 1. Topography curve
+    x_topo, z_topo = carica_punti_topografia()
+    z_min_topo = float(np.min(z_topo))
+    y_min_axis = z_min_topo - 5.0  # Asse Y parte da 5 metri sotto la quota più bassa
 
-    # Dense smooth spline for continuous topography
-    x_smooth = np.linspace(0, 345, 300)
+    x_smooth = np.linspace(float(x_topo[0]), float(x_topo[-1]), 300)
     z_smooth = np.interp(x_smooth, x_topo, z_topo)
 
     # Shaded ground topography
@@ -64,7 +90,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
         ("Detachment Sector", 0, 50, "rgba(214, 39, 40, 0.08)"),
         ("Counterslope Sector", 50, 80, "rgba(255, 127, 14, 0.08)"),
         ("Steep Slope Sector", 80, 130, "rgba(44, 160, 44, 0.08)"),
-        ("Undisturbed Basal Clay", 280, 345, "rgba(31, 119, 180, 0.08)"),
+        ("Undisturbed Basal Clay", 280, float(x_topo[-1]), "rgba(31, 119, 180, 0.08)"),
     ]
 
     for _, x0, x1, col in sectors:
@@ -110,7 +136,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
         )
     )
 
-    # 4. Inactive samples
+    # 4. Inactive samples (Sand_R excluded)
     other_x, other_y, other_text, other_names = [], [], [], []
     active_x, active_y, active_text, active_sec, active_depth = None, None, None, None, None
 
@@ -146,7 +172,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             )
         )
 
-    # 5. Highlight Active Sample
+    # 5. Highlight Active Sample (if in natural samples)
     if active_x is not None and active_y is not None:
         sec_col = SECTOR_COLORS.get(active_sec, "red")
         fig.add_trace(
@@ -169,7 +195,11 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             )
         )
 
-    titolo = f"Slope Profile: <b>{campione_attivo}</b> [{active_depth or ''} — {active_sec or ''}]"
+    titolo = (
+        f"Slope Profile: <b>{campione_attivo}</b> [{active_depth or ''} — {active_sec or ''}]"
+        if active_sec
+        else f"Slope Profile (Lab Reference: {campione_attivo})"
+    )
     fig.update_layout(
         title=dict(
             text=titolo,
@@ -181,14 +211,14 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             showgrid=True,
             gridcolor="lightgrey",
             zeroline=False,
-            range=[-10, 355],
+            range=[-10, float(x_topo[-1]) + 15],
         ),
         yaxis=dict(
             title="Relative Elevation [m]",
             showgrid=True,
             gridcolor="lightgrey",
             zeroline=False,
-            range=[0, 115],
+            range=[y_min_axis, float(np.max(z_topo)) + 15],
         ),
         template="plotly_white",
         margin=dict(l=40, r=20, t=35, b=35),

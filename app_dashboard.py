@@ -14,7 +14,7 @@ from src.visualization.config import (
 from src.visualization.cross_plots import crea_cross_plot_plotly, ottieni_lista_qp_per_categoria
 from src.visualization.cylinder_3d import crea_figura_cilindro_3d
 from src.visualization.landslide_profile import (
-    SAMPLE_SLOPE_POSITIONS,
+    SAMPLE_SLOPE_SPECS,
     crea_profilo_versante_plotly,
 )
 
@@ -73,11 +73,11 @@ def render_inspection_popover(
             fig_slope.update_layout(height=380)
             st.plotly_chart(fig_slope, use_container_width=True, key=f"{key_prefix}_pop_slope")
 
-        # Sector notes
-        sec_info = SAMPLE_SLOPE_POSITIONS.get(sample_id, (0, 0, "Unknown Sector"))
+        # Sector & Depth notes
+        sec_spec = SAMPLE_SLOPE_SPECS.get(sample_id, (0, 0, "Unknown Sector", "Surface", sample_id))
         st.info(
-            f"**Geomorphological Location**: `{sample_id}` is located in the **{sec_info[2]}** "
-            f"(Relative Elevation: {sec_info[1]} m)."
+            f"**Field Sample**: `{sample_id}` ({sec_spec[4]}) — **{sec_spec[3]}** | "
+            f"**Sector**: **{sec_spec[2]}** (Rel. Elevation: {sec_spec[1]} m)."
         )
 
 
@@ -284,30 +284,32 @@ def main() -> None:
             key_prefix="single_p1",
         )
 
-        with st.expander("ℹ️ Quadrupole Geometry & Landslide Sector Specifications"):
+        with st.expander("ℹ️ Field Sampling Depths & Landslide Sector Specifications"):
             c1, c2, c3, c4 = st.columns(4)
             with c1:
                 st.markdown(
                     "**Detachment Sector**\n"
-                    "- `ML9`: Summit scarp\n"
-                    "- `ML8`: Upper scarp\n"
-                    "- `ML7`: Main detachment"
+                    "- `ML7` (3a): Surface (0 cm)\n"
+                    "- `ML8` (3b): Depth (-50 cm, paired with ML7)\n"
+                    "- `ML9` (4b): Depth (-50 cm, summit)"
                 )
             with c2:
                 st.markdown(
-                    "**Counterslope Sector**\n- `ML6`: Trench zone\n- `ML5`: Counter-tilted block"
+                    "**Counterslope Sector**\n"
+                    "- `ML5` (2a): Surface (0 cm)\n"
+                    "- `ML6` (2b): Depth (-50 cm, paired with ML5)"
                 )
             with c3:
                 st.markdown(
                     "**Steep Slope Sector**\n"
-                    "- `ML4`: Main body (upper)\n"
-                    "- `ML3`: Main body (middle)\n"
-                    "- `ML1`: Toe of slope"
+                    "- `ML3` (1a): Surface (0 cm)\n"
+                    "- `ML4` (1b): Depth (-50 cm, paired with ML3)\n"
+                    "- `ML1` (5a): Surface (0 cm)"
                 )
             with c4:
                 st.markdown(
                     "**Basal Clay Outcrop**\n"
-                    "- `ML10`: Undisturbed in-situ clay\n"
+                    "- `ML10` (6a): Surface (0 cm, in-situ clay)\n"
                     "*(Outside active landslide)*"
                 )
 

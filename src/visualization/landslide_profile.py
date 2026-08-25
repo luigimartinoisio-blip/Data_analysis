@@ -1,22 +1,27 @@
-"""Idealized Landslide Slope Profile showing sample spatial distribution."""
+"""Idealized Landslide Slope Profile showing exact spatial and depth distribution."""
 
 from typing import Dict, Tuple
 
 import numpy as np
 import plotly.graph_objects as go
 
-# Geomorphological Sectors and Sample Coordinates (Distance X [m], Elevation Z [m])
-SAMPLE_SLOPE_POSITIONS: Dict[str, Tuple[float, float, str]] = {
-    "ML9": (15.0, 92.0, "Detachment Sector"),
-    "ML8": (28.0, 84.0, "Detachment Sector"),
-    "ML7": (38.0, 78.0, "Detachment Sector"),
-    "ML6": (52.0, 72.0, "Counterslope Sector"),
-    "ML5": (64.0, 68.0, "Counterslope Sector"),
-    "ML4": (78.0, 58.0, "Steep Slope Sector"),
-    "ML3": (92.0, 44.0, "Steep Slope Sector"),
-    "ML1": (108.0, 30.0, "Steep Slope Sector"),
-    "ML10": (132.0, 12.0, "Undisturbed Basal Clay"),
-    "Sand_R": (148.0, 8.0, "Archie Sand Reference"),
+# Geomorphological Sectors, Spatial X [m], Elevation Z [m], Depth [cm], and Depth Label
+SAMPLE_SLOPE_SPECS: Dict[str, Tuple[float, float, str, str, str]] = {
+    # Sector: Detachment
+    "ML9": (15.0, 92.0, "Detachment Sector", "Depth: -50 cm", "4b (-50 cm)"),
+    "ML7": (35.0, 80.0, "Detachment Sector", "Surface (0 cm)", "3a (0 cm)"),
+    "ML8": (35.0, 75.0, "Detachment Sector", "Depth: -50 cm", "3b (-50 cm)"),
+    # Sector: Counterslope
+    "ML5": (58.0, 70.0, "Counterslope Sector", "Surface (0 cm)", "2a (0 cm)"),
+    "ML6": (58.0, 65.0, "Counterslope Sector", "Depth: -50 cm", "2b (-50 cm)"),
+    # Sector: Steep Slope
+    "ML3": (88.0, 48.0, "Steep Slope Sector", "Surface (0 cm)", "1a (0 cm)"),
+    "ML4": (88.0, 43.0, "Steep Slope Sector", "Depth: -50 cm", "1b (-50 cm)"),
+    "ML1": (108.0, 30.0, "Steep Slope Sector", "Surface (0 cm)", "5a (0 cm)"),
+    # Sector: Undisturbed Basal Outcrop
+    "ML10": (132.0, 13.0, "Undisturbed Basal Clay", "Surface (0 cm)", "6a (0 cm)"),
+    # Outgroup
+    "Sand_R": (150.0, 8.0, "Archie Sand Reference", "Lab Benchmark", "Sand_R"),
 }
 
 SECTOR_COLORS: Dict[str, str] = {
@@ -29,7 +34,7 @@ SECTOR_COLORS: Dict[str, str] = {
 
 
 def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
-    """Generates an idealized landslide topographic profile highlighting sample position."""
+    """Generates an idealized landslide topographic profile highlighting position and depth."""
     fig = go.Figure()
 
     # 1. Idealized topography curve
@@ -46,15 +51,15 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             x=x_smooth,
             y=z_smooth,
             mode="lines",
-            line=dict(color="rgb(80, 60, 40)", width=2.5),
+            line=dict(color="rgb(90, 65, 45)", width=2.5),
             fill="tozeroy",
-            fillcolor="rgba(210, 195, 175, 0.35)",
+            fillcolor="rgba(215, 200, 180, 0.35)",
             hoverinfo="skip",
             name="Topographic Surface",
         )
     )
 
-    # 2. Sector background annotations / shaded boundaries
+    # 2. Sector background shaded zones
     sectors = [
         ("Detachment Sector", 0, 45, "rgba(214, 39, 40, 0.08)"),
         ("Counterslope Sector", 45, 70, "rgba(255, 127, 14, 0.08)"),
@@ -62,7 +67,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
         ("Undisturbed Basal Clay", 120, 160, "rgba(31, 119, 180, 0.08)"),
     ]
 
-    for sec_name, x0, x1, col in sectors:
+    for _, x0, x1, col in sectors:
         fig.add_vrect(
             x0=x0,
             x1=x1,
@@ -71,19 +76,58 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             line_width=0,
         )
 
-    # 3. Add other samples (grey/muted circles)
-    other_x, other_y, other_text, other_names = [], [], [], []
-    active_x, active_y, active_text, active_sec = None, None, None, None
+    # 3. Vertical dashed connector lines for Surface / -50cm pairs
+    depth_pairs = [
+        ("ML7", "ML8"),  # 3a (0cm) and 3b (-50cm)
+        ("ML5", "ML6"),  # 2a (0cm) and 2b (-50cm)
+        ("ML3", "ML4"),  # 1a (0cm) and 1b (-50cm)
+    ]
+    for s_top, s_bot in depth_pairs:
+        top_spec = SAMPLE_SLOPE_SPECS[s_top]
+        bot_spec = SAMPLE_SLOPE_SPECS[s_bot]
+        fig.add_trace(
+            go.Scatter(
+                x=[top_spec[0], bot_spec[0]],
+                y=[top_spec[1], bot_spec[1]],
+                mode="lines",
+                line=dict(color="rgba(100, 100, 100, 0.6)", width=1.5, dash="dash"),
+                hoverinfo="skip",
+                showlegend=False,
+            )
+        )
 
-    for s_name, (sx, sz, s_sec) in SAMPLE_SLOPE_POSITIONS.items():
-        tip = f"<b>Sample {s_name}</b><br>Sector: {s_sec}<br>Relative Elevation: {sz} m"
+    # Vertical connector for ML9 (-50cm) to ground surface
+    ml9_x, ml9_z = SAMPLE_SLOPE_SPECS["ML9"][0], SAMPLE_SLOPE_SPECS["ML9"][1]
+    ground_z_ml9 = float(np.interp(ml9_x, x_topo, z_topo))
+    fig.add_trace(
+        go.Scatter(
+            x=[ml9_x, ml9_x],
+            y=[ground_z_ml9, ml9_z],
+            mode="lines",
+            line=dict(color="rgba(100, 100, 100, 0.6)", width=1.5, dash="dash"),
+            hoverinfo="skip",
+            showlegend=False,
+        )
+    )
+
+    # 4. Inactive samples
+    other_x, other_y, other_text, other_names = [], [], [], []
+    active_x, active_y, active_text, active_sec, active_depth = None, None, None, None, None
+
+    for s_name, (sx, sz, s_sec, s_depth, s_code) in SAMPLE_SLOPE_SPECS.items():
+        tip = (
+            f"<b>Sample {s_name} ({s_code})</b><br>"
+            f"Sector: {s_sec}<br>"
+            f"{s_depth}<br>"
+            f"Rel. Elevation: {sz} m"
+        )
         if s_name == campione_attivo:
-            active_x, active_y, active_text, active_sec = sx, sz, tip, s_sec
+            active_x, active_y, active_text, active_sec, active_depth = sx, sz, tip, s_sec, s_depth
         else:
             other_x.append(sx)
             other_y.append(sz)
             other_text.append(tip)
-            other_names.append(s_name)
+            other_names.append(f"{s_name}")
 
     if other_x:
         fig.add_trace(
@@ -91,17 +135,17 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
                 x=other_x,
                 y=other_y,
                 mode="markers+text",
-                marker=dict(size=9, color="rgb(100, 100, 100)", symbol="circle"),
+                marker=dict(size=8, color="rgb(110, 110, 110)", symbol="circle"),
                 text=other_names,
-                textposition="top center",
-                textfont=dict(size=9, color="rgb(80, 80, 80)"),
+                textposition="top right",
+                textfont=dict(size=9, color="rgb(70, 70, 70)"),
                 hoverinfo="text",
                 hovertext=other_text,
                 name="Other Samples",
             )
         )
 
-    # 4. Highlight Active Sample with prominent glowing marker and annotation
+    # 5. Highlight Active Sample
     if active_x is not None and active_y is not None:
         sec_col = SECTOR_COLORS.get(active_sec, "red")
         fig.add_trace(
@@ -110,25 +154,26 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
                 y=[active_y],
                 mode="markers+text",
                 marker=dict(
-                    size=15,
+                    size=14,
                     color=sec_col,
                     symbol="circle",
-                    line=dict(width=3, color="black"),
+                    line=dict(width=2.5, color="black"),
                 ),
-                text=[f"<b>{campione_attivo}</b>"],
+                text=[f"<b>{campione_attivo}</b> ({active_depth})"],
                 textposition="bottom center",
-                textfont=dict(size=12, color="black"),
+                textfont=dict(size=11, color="black"),
                 hoverinfo="text",
                 hovertext=[active_text],
-                name=f"Active Sample: {campione_attivo}",
+                name=f"Active: {campione_attivo}",
             )
         )
 
+    titolo = f"Slope Location: <b>{campione_attivo}</b> [{active_depth or ''} — {active_sec or ''}]"
     fig.update_layout(
         title=dict(
-            text=f"Slope Profile: <b>{campione_attivo}</b> ({active_sec or ''})",
+            text=titolo,
             x=0.5,
-            font=dict(size=13),
+            font=dict(size=12),
         ),
         xaxis=dict(
             title="Profile Distance [m]",

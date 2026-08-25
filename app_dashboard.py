@@ -216,15 +216,24 @@ def render_grid_cell(
                 key=f"{key_prefix}_y",
             )
 
-        c_opt1, c_opt2, c_insp = st.columns([1, 1, 2])
+        c_opt1, c_opt2, c_qc = st.columns([1, 1, 2])
         with c_opt1:
             log_x = st.checkbox(
-                "Log X", value=(var_x == "suzione_media_kpa"), key=f"{key_prefix}_lx"
+                "Log X",
+                value=(var_x == "suzione_media_kpa"),
+                key=f"{key_prefix}_lx",
             )
         with c_opt2:
             log_y = st.checkbox("Log Y", value=False, key=f"{key_prefix}_ly")
-        with c_insp:
-            render_inspection_popover(sample_sel, cat_sel, f"{key_prefix}_grid_insp")
+        with c_qc:
+            filter_qc = st.checkbox(
+                "Filter ε_rec < 5%",
+                value=False,
+                key=f"{key_prefix}_fqc",
+            )
+            qc_thresh = 5.0
+
+        render_inspection_popover(sample_sel, cat_sel, f"{key_prefix}_grid_insp")
 
         df_sample = load_sample_data(sample_sel)
         if not df_sample.empty:
@@ -234,6 +243,8 @@ def render_grid_cell(
                 var_x=var_x,
                 categoria_o_qp=cat_sel,
                 var_y_tipo=var_y,
+                filtra_qc=filter_qc,
+                soglia_qc_eps=qc_thresh,
                 log_x=log_x,
                 log_y=log_y,
                 titolo_personalizzato=title_text,
@@ -388,6 +399,9 @@ def main() -> None:
             )
             ov_log_x = st.checkbox("Log X", value=(ov_var_x == "suzione_media_kpa"), key="ov_logx")
             ov_log_y = st.checkbox("Log Y", value=False, key="ov_logy")
+            ov_filtra_qc = st.checkbox(
+                "Filter Reciprocal Error (ε_rec < 5%)", value=False, key="ov_fqc"
+            )
 
         with col_ov_plot:
             if selected_samples:
@@ -408,8 +422,15 @@ def main() -> None:
                 for s_idx, s_id in enumerate(selected_samples):
                     df_s = load_sample_data(s_id)
                     col_rho = f"rho25_{target_qp}"
+                    col_eps = f"eps_{target_qp}"
                     if col_rho in df_s.columns:
-                        df_s_valid = df_s.dropna(subset=[ov_var_x, col_rho])
+                        df_s_filt = df_s.copy()
+                        if ov_filtra_qc and col_eps in df_s_filt.columns:
+                            df_s_filt = df_s_filt[
+                                (df_s_filt[col_eps] < 5.0) | (df_s_filt[col_eps].isna())
+                            ]
+
+                        df_s_valid = df_s_filt.dropna(subset=[ov_var_x, col_rho])
                         fig_ov.add_trace(
                             go.Scatter(
                                 x=df_s_valid[ov_var_x],

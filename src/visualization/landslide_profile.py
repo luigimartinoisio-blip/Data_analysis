@@ -5,23 +5,23 @@ from typing import Dict, Tuple
 import numpy as np
 import plotly.graph_objects as go
 
-# Geomorphological Sectors, Spatial X [m], Elevation Z [m], Depth [cm], and Depth Label
+# Geomorphological Sectors, Spatial Distance X [m], Elevation Z [m], Depth [cm], and Label
 SAMPLE_SLOPE_SPECS: Dict[str, Tuple[float, float, str, str, str]] = {
     # Sector: Detachment
-    "ML9": (15.0, 92.0, "Detachment Sector", "Depth: -50 cm", "4b (-50 cm)"),
-    "ML7": (35.0, 80.0, "Detachment Sector", "Surface (0 cm)", "3a (0 cm)"),
-    "ML8": (35.0, 75.0, "Detachment Sector", "Depth: -50 cm", "3b (-50 cm)"),
+    "ML9": (10.0, 90.0, "Detachment Sector", "Depth: -50 cm", "4b (-50 cm)"),
+    "ML7": (36.0, 82.0, "Detachment Sector", "Surface (0 cm)", "3a (0 cm)"),
+    "ML8": (36.0, 77.0, "Detachment Sector", "Depth: -50 cm", "3b (-50 cm)"),
     # Sector: Counterslope
-    "ML5": (58.0, 70.0, "Counterslope Sector", "Surface (0 cm)", "2a (0 cm)"),
-    "ML6": (58.0, 65.0, "Counterslope Sector", "Depth: -50 cm", "2b (-50 cm)"),
+    "ML5": (72.0, 73.0, "Counterslope Sector", "Surface (0 cm)", "2a (0 cm)"),
+    "ML6": (72.0, 68.0, "Counterslope Sector", "Depth: -50 cm", "2b (-50 cm)"),
     # Sector: Steep Slope
-    "ML3": (88.0, 48.0, "Steep Slope Sector", "Surface (0 cm)", "1a (0 cm)"),
-    "ML4": (88.0, 43.0, "Steep Slope Sector", "Depth: -50 cm", "1b (-50 cm)"),
-    "ML1": (108.0, 30.0, "Steep Slope Sector", "Surface (0 cm)", "5a (0 cm)"),
+    "ML3": (93.0, 52.0, "Steep Slope Sector", "Surface (0 cm)", "1a (0 cm)"),
+    "ML4": (93.0, 47.0, "Steep Slope Sector", "Depth: -50 cm", "1b (-50 cm)"),
+    "ML1": (108.0, 36.0, "Steep Slope Sector", "Surface (0 cm)", "5a (0 cm)"),
     # Sector: Undisturbed Basal Outcrop
-    "ML10": (132.0, 13.0, "Undisturbed Basal Clay", "Surface (0 cm)", "6a (0 cm)"),
+    "ML10": (317.0, 10.0, "Undisturbed Basal Clay", "Surface (0 cm)", "6a (0 cm)"),
     # Outgroup
-    "Sand_R": (150.0, 8.0, "Archie Sand Reference", "Lab Benchmark", "Sand_R"),
+    "Sand_R": (340.0, 8.0, "Archie Sand Reference", "Lab Benchmark", "Sand_R"),
 }
 
 SECTOR_COLORS: Dict[str, str] = {
@@ -37,15 +37,15 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
     """Generates an idealized landslide topographic profile highlighting position and depth."""
     fig = go.Figure()
 
-    # 1. Idealized topography curve
-    x_topo = np.array([0, 10, 20, 35, 45, 55, 65, 75, 90, 105, 120, 130, 145, 160])
-    z_topo = np.array([100, 95, 90, 80, 76, 71, 67, 60, 46, 32, 18, 13, 10, 8])
+    # 1. Topography curve based on profile survey coordinates
+    x_topo = np.array([0, 10, 25, 36, 50, 72, 85, 93, 108, 120, 150, 200, 260, 317, 345])
+    z_topo = np.array([100, 95, 88, 82, 77, 73, 62, 52, 36, 25, 20, 15, 12, 10, 8])
 
-    # Dense smooth spline for topography
-    x_smooth = np.linspace(0, 160, 200)
+    # Dense smooth spline for continuous topography
+    x_smooth = np.linspace(0, 345, 300)
     z_smooth = np.interp(x_smooth, x_topo, z_topo)
 
-    # Shaded topography area (ground)
+    # Shaded ground topography
     fig.add_trace(
         go.Scatter(
             x=x_smooth,
@@ -61,10 +61,10 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
 
     # 2. Sector background shaded zones
     sectors = [
-        ("Detachment Sector", 0, 45, "rgba(214, 39, 40, 0.08)"),
-        ("Counterslope Sector", 45, 70, "rgba(255, 127, 14, 0.08)"),
-        ("Steep Slope Sector", 70, 120, "rgba(44, 160, 44, 0.08)"),
-        ("Undisturbed Basal Clay", 120, 160, "rgba(31, 119, 180, 0.08)"),
+        ("Detachment Sector", 0, 50, "rgba(214, 39, 40, 0.08)"),
+        ("Counterslope Sector", 50, 80, "rgba(255, 127, 14, 0.08)"),
+        ("Steep Slope Sector", 80, 130, "rgba(44, 160, 44, 0.08)"),
+        ("Undisturbed Basal Clay", 280, 345, "rgba(31, 119, 180, 0.08)"),
     ]
 
     for _, x0, x1, col in sectors:
@@ -78,9 +78,9 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
 
     # 3. Vertical dashed connector lines for Surface / -50cm pairs
     depth_pairs = [
-        ("ML7", "ML8"),  # 3a (0cm) and 3b (-50cm)
-        ("ML5", "ML6"),  # 2a (0cm) and 2b (-50cm)
-        ("ML3", "ML4"),  # 1a (0cm) and 1b (-50cm)
+        ("ML7", "ML8"),  # 3a (0cm) and 3b (-50cm) at x = 36 m
+        ("ML5", "ML6"),  # 2a (0cm) and 2b (-50cm) at x = 72 m
+        ("ML3", "ML4"),  # 1a (0cm) and 1b (-50cm) at x = 93 m
     ]
     for s_top, s_bot in depth_pairs:
         top_spec = SAMPLE_SLOPE_SPECS[s_top]
@@ -96,7 +96,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             )
         )
 
-    # Vertical connector for ML9 (-50cm) to ground surface
+    # Vertical connector for ML9 (-50cm) at x = 10 m to ground surface
     ml9_x, ml9_z = SAMPLE_SLOPE_SPECS["ML9"][0], SAMPLE_SLOPE_SPECS["ML9"][1]
     ground_z_ml9 = float(np.interp(ml9_x, x_topo, z_topo))
     fig.add_trace(
@@ -118,8 +118,9 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
         tip = (
             f"<b>Sample {s_name} ({s_code})</b><br>"
             f"Sector: {s_sec}<br>"
+            f"Profile Distance: {sx:.0f} m<br>"
             f"{s_depth}<br>"
-            f"Rel. Elevation: {sz} m"
+            f"Rel. Elevation: {sz:.1f} m"
         )
         if s_name == campione_attivo:
             active_x, active_y, active_text, active_sec, active_depth = sx, sz, tip, s_sec, s_depth
@@ -168,7 +169,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             )
         )
 
-    titolo = f"Slope Location: <b>{campione_attivo}</b> [{active_depth or ''} — {active_sec or ''}]"
+    titolo = f"Slope Profile: <b>{campione_attivo}</b> [{active_depth or ''} — {active_sec or ''}]"
     fig.update_layout(
         title=dict(
             text=titolo,
@@ -176,11 +177,11 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             font=dict(size=12),
         ),
         xaxis=dict(
-            title="Profile Distance [m]",
+            title="Profile Distance from Crest [m]",
             showgrid=True,
             gridcolor="lightgrey",
             zeroline=False,
-            range=[-5, 165],
+            range=[-10, 355],
         ),
         yaxis=dict(
             title="Relative Elevation [m]",

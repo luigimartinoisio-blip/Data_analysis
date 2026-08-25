@@ -58,17 +58,20 @@ def render_inspection_popover(
     """Renders a popover dialog showing 3D cylinder and Landslide Slope Profile."""
     with st.popover("🔍 Inspect 3D Geometry & Slope Location"):
         st.markdown(f"### 🔍 Spatial Context: **{sample_id}** ({active_category})")
-        c_3d, c_slope = st.columns([1, 1])
+        c_3d, c_slope = st.columns([1.0, 2.5])
 
         with c_3d:
             st.markdown("#### 🧊 3D Electrode Array")
             active_qps = ottieni_lista_qp_per_categoria(active_category)
-            fig_3d = crea_figura_cilindro_3d(quadripoli_attivi=active_qps)
+            fig_3d = crea_figura_cilindro_3d(
+                quadripoli_attivi=active_qps,
+                categoria_attiva=active_category,
+            )
             fig_3d.update_layout(height=380)
             st.plotly_chart(fig_3d, use_container_width=True, key=f"{key_prefix}_pop_3d")
 
         with c_slope:
-            st.markdown("#### ⛰️ Landslide Slope Profile")
+            st.markdown("#### ⛰️ 1:1 True-Scale Landslide Slope Profile")
             fig_slope = crea_profilo_versante_plotly(campione_attivo=sample_id)
             fig_slope.update_layout(height=380)
             st.plotly_chart(fig_slope, use_container_width=True, key=f"{key_prefix}_pop_slope")
@@ -77,7 +80,7 @@ def render_inspection_popover(
         sec_spec = SAMPLE_SLOPE_SPECS.get(sample_id, (0, 0, "Unknown Sector", "Surface", sample_id))
         st.info(
             f"**Field Sample**: `{sample_id}` ({sec_spec[4]}) — **{sec_spec[3]}** | "
-            f"**Sector**: **{sec_spec[2]}** (Rel. Elevation: {sec_spec[1]} m)."
+            f"**Sector**: **{sec_spec[2]}** (Survey Elevation: {sec_spec[1]:.1f} m a.s.l.)."
         )
 
 
@@ -288,29 +291,29 @@ def main() -> None:
             c1, c2, c3, c4 = st.columns(4)
             with c1:
                 st.markdown(
-                    "**Detachment Sector**\n"
-                    "- `ML7` (3a): Surface (0 cm)\n"
-                    "- `ML8` (3b): Depth (-50 cm, paired with ML7)\n"
-                    "- `ML9` (4b): Depth (-50 cm, summit)"
+                    "**Detachment Sector (0 - 45 m)**\n"
+                    "- `ML7` (3a): Surface (0 cm, x=36m)\n"
+                    "- `ML8` (3b): Depth (-50 cm, x=36m)\n"
+                    "- `ML9` (4b): Depth (-50 cm, x=10m)"
                 )
             with c2:
                 st.markdown(
-                    "**Counterslope Sector**\n"
-                    "- `ML5` (2a): Surface (0 cm)\n"
-                    "- `ML6` (2b): Depth (-50 cm, paired with ML5)"
+                    "**Counterslope Sector (45 - 75 m)**\n"
+                    "- `ML5` (2a): Surface (0 cm, x=72m)\n"
+                    "- `ML6` (2b): Depth (-50 cm, x=72m)"
                 )
             with c3:
                 st.markdown(
-                    "**Steep Slope Sector**\n"
-                    "- `ML3` (1a): Surface (0 cm)\n"
-                    "- `ML4` (1b): Depth (-50 cm, paired with ML3)\n"
-                    "- `ML1` (5a): Surface (0 cm)"
+                    "**Steep Slope Sector (75 - 112 m)**\n"
+                    "- `ML3` (1a): Surface (0 cm, x=93m)\n"
+                    "- `ML4` (1b): Depth (-50 cm, x=93m)\n"
+                    "- `ML1` (5a): Surface (0 cm, x=108m)"
                 )
             with c4:
                 st.markdown(
-                    "**Basal Clay Outcrop**\n"
-                    "- `ML10` (6a): Surface (0 cm, in-situ clay)\n"
-                    "*(Outside active landslide)*"
+                    "**Outside Landslide (> 112 m)**\n"
+                    "- `ML10` (6a): Surface (0 cm, x=317m)\n"
+                    "*(Undisturbed basal clay)*"
                 )
 
     # 2. GRID COMPARISON (QUADRO 2x2)

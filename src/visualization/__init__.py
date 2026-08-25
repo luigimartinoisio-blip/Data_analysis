@@ -14,7 +14,7 @@ from src.visualization.cross_plots import (
 )
 from src.visualization.cylinder_3d import crea_figura_cilindro_3d
 from src.visualization.landslide_profile import (
-    SAMPLE_SLOPE_POSITIONS,
+    SAMPLE_SLOPE_SPECS,
     crea_profilo_versante_plotly,
 )
 
@@ -24,7 +24,7 @@ __all__ = [
     "LABEL_VARIABILI",
     "MARKER_DEFAULT",
     "PALETTE_COLORI",
-    "SAMPLE_SLOPE_POSITIONS",
+    "SAMPLE_SLOPE_SPECS",
     "crea_cross_plot_plotly",
     "crea_cross_plot_matplotlib",
     "crea_figura_cilindro_3d",

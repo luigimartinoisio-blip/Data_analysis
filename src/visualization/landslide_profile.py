@@ -85,7 +85,6 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
 
     # 1. Continuous interpolated topography curve
     x_topo, z_topo, z_min, z_max = carica_profilo_topografico_interpolato()
-    y_min_axis = z_min - 5.0  # Asse Y parte da 5m sotto la quota minima (576 m)
 
     # Shaded ground topography
     fig.add_trace(
@@ -203,12 +202,10 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
         ),
         yaxis=dict(
             title="Elevation [m a.s.l.]",
-            scaleanchor="x",
-            scaleratio=0.625,  # X:Y visual display ratio = 1.6:1
             showgrid=True,
             gridcolor="lightgrey",
             zeroline=False,
-            range=[y_min_axis, z_max + 14],
+            range=[550, 650],
         ),
         legend=dict(
             orientation="h",

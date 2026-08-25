@@ -1,0 +1,19 @@
+# GUIDA ESECUTIVA E REGOLE DI PROGETTO PER L'AI
+
+## 🚫 DIVIETI RIGIDI
+1. **NO CODICE DI INVERSIONE**: Non implementare, proporre o importare routine di inversione tomografica 2D/3D (es. PyGIMLi Inversion, SimPEG Inversion, wrapper Res2DInv/Res3DInv) a meno di esplicita e specifica richiesta dell'utente. Il perimetro è l'analisi dati, non l'inversione.
+2. **NO MYPY RIGIDO**: Non applicare o forzare verifiche statiche di tipo complesse o cast ridondanti su DataFrame Pandas / strutture dinamiche.
+3. **NO TEST SUPERFLUI**: Non scrivere test per grafici (Matplotlib/Plotly/PyVista) o per funzioni standard di Pandas. I test sono riservati SOLO a parsing I/O e formule matematiche core.
+4. **NO ALTRI FORMATTATORI**: Non usare o configurare Black/Flake8/isort separatamente; usa esclusivamente Ruff.
+
+---
+
+## ⚡ ISTRUZIONI OPERATIVE E STANDARD
+- **LINGUA**: Tutto in **ITALIANO** (nomi logici del codice, docstring, commenti, log, messaggi di commit, report).
+- **STACK**: Python 3.11+, `pip` + `venv`, `numpy`, `scipy`, `pandas`, `matplotlib`, `seaborn`, `plotly`, `pyvista`.
+- **STRUTTURA**:
+  - `src/`: Moduli Python stabili (parser I/O certificati, formule matematiche core, modelli petrofisici, statistiche).
+  - `notebooks/`: Jupyter Notebooks per analisi esplorativa, cross-correlazioni e grafici.
+  - `tests/`: Solo test unitari per parsing file strumentali (es. Syscal) e calcoli matematici critici (fattori geometrici K, formule petrofisiche).
+- **TYPE HINTS**: Flessibili, usati come documentazione nelle firme delle funzioni principali (`def func(k: float, i: float) -> float:`).
+- **STILE**: Delega la formattazione e il linting unicamente a **Ruff** (PEP 8 automatizzato).

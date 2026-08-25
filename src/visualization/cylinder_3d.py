@@ -33,7 +33,7 @@ def crea_figura_cilindro_3d(
 ) -> go.Figure:
     """3D Plotly visualization of cylinder highlighting A, B (blue) and M, N (red),
 
-    or Upper/Lower half volume shading (40% opacity).
+    or Upper/Lower half volume shading (40% opacity). When 'All', all electrodes are grey/inactive.
     """
     fig = go.Figure()
     array_geo = ArrayCilindrico16(raggio_cilindro_cm=raggio_cm, altezza_cilindro_cm=altezza_cm)
@@ -41,11 +41,14 @@ def crea_figura_cilindro_3d(
     theta_grid = np.linspace(0, 2 * np.pi, 36)
     z_half = altezza_cm / 2.0  # 2.5 cm
 
-    is_upper_category = categoria_attiva == "Upper" or (
-        quadripoli_attivi and set(quadripoli_attivi) == {"qp1", "qp2", "qp3"}
+    is_all_category = categoria_attiva == "All"
+    is_upper_category = not is_all_category and (
+        categoria_attiva == "Upper"
+        or (quadripoli_attivi and set(quadripoli_attivi) == {"qp1", "qp2", "qp3"})
     )
-    is_lower_category = categoria_attiva == "Lower" or (
-        quadripoli_attivi and set(quadripoli_attivi) == {"qp4", "qp5", "qp6"}
+    is_lower_category = not is_all_category and (
+        categoria_attiva == "Lower"
+        or (quadripoli_attivi and set(quadripoli_attivi) == {"qp4", "qp5", "qp6"})
     )
 
     # 1. Base / Shaded Cylinder Sections
@@ -114,7 +117,7 @@ def crea_figura_cilindro_3d(
         )
 
     else:
-        # Standard neutral wireframe cylinder
+        # Standard neutral wireframe cylinder (used for 'All' and individual quadrupoles)
         z_grid = np.linspace(0, altezza_cm, 10)
         th_m, z_m = np.meshgrid(theta_grid, z_grid)
         fig.add_trace(
@@ -149,11 +152,11 @@ def crea_figura_cilindro_3d(
             )
 
     # 3. Identify active (A, B) and (M, N) electrodes
-    # If category is Upper or Lower, all quadrupoles are off (all electrodes inactive)
+    # If category is 'All', 'Upper', or 'Lower', all electrodes remain inactive (grey)
     current_electrodes: set[int] = set()  # A, B -> Blue
     potential_electrodes: set[int] = set()  # M, N -> Red
 
-    if not (is_upper_category or is_lower_category) and quadripoli_attivi:
+    if not (is_all_category or is_upper_category or is_lower_category) and quadripoli_attivi:
         for qp in quadripoli_attivi:
             if qp in QUATERNE_QP:
                 a, b, m, n = QUATERNE_QP[qp]
@@ -245,7 +248,9 @@ def crea_figura_cilindro_3d(
         )
 
     # Title description
-    if is_upper_category:
+    if is_all_category:
+        titolo = "Electrode Array (All Inactive)"
+    elif is_upper_category:
         titolo = "Upper Half Configuration (Ring 1 & 2)"
     elif is_lower_category:
         titolo = "Lower Half Configuration (Ring 3 & 4)"

@@ -1,4 +1,4 @@
-"""Landslide Slope Profile with custom visual ratio 1.6:1 and stacked sample labels."""
+"""Landslide Slope Profile with visual ratio 1.6:1 and clean non-overlapping labels."""
 
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -30,32 +30,14 @@ SECTOR_COLORS: Dict[str, str] = {
 }
 
 # Sampling locations grouped by spatial distance X
-# Format: distance_x: (sector, [(sample_name, depth_label, field_code)])
-SAMPLING_STATIONS: Dict[float, Tuple[str, List[Tuple[str, str, str]]]] = {
-    10.0: (
-        "Detachment Sector",
-        [("ML9", "Depth: -50 cm", "4b")],
-    ),
-    36.0: (
-        "Detachment Sector",
-        [("ML7", "Surface: 0 cm", "3a"), ("ML8", "Depth: -50 cm", "3b")],
-    ),
-    72.0: (
-        "Counterslope Sector",
-        [("ML5", "Surface: 0 cm", "2a"), ("ML6", "Depth: -50 cm", "2b")],
-    ),
-    93.0: (
-        "Steep Slope Sector",
-        [("ML3", "Surface: 0 cm", "1a"), ("ML4", "Depth: -50 cm", "1b")],
-    ),
-    108.0: (
-        "Steep Slope Sector",
-        [("ML1", "Surface: 0 cm", "5a")],
-    ),
-    317.0: (
-        "Undisturbed Outside Landslide",
-        [("ML10", "Surface: 0 cm", "6a")],
-    ),
+# Format: distance_x: (sector, [sample_names], text_position)
+SAMPLING_STATIONS: Dict[float, Tuple[str, List[str], str]] = {
+    10.0: ("Detachment Sector", ["ML9"], "top center"),
+    36.0: ("Detachment Sector", ["ML7", "ML8"], "top center"),
+    72.0: ("Counterslope Sector", ["ML5", "ML6"], "top center"),
+    93.0: ("Steep Slope Sector", ["ML3", "ML4"], "top center"),
+    108.0: ("Steep Slope Sector", ["ML1"], "top right"),
+    317.0: ("Undisturbed Outside Landslide", ["ML10"], "top left"),
 }
 
 # Flat metadata dictionary for individual sample lookup
@@ -95,9 +77,9 @@ def carica_profilo_topografico_interpolato() -> Tuple[np.ndarray, np.ndarray, fl
 
 
 def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
-    """Generates the topographic profile with 1.6:1 visual ratio, single surface points,
+    """Generates the topographic profile with visual ratio 1.6:1, clean sample labels only,
 
-    stacked labels, sector legend, and exact title 'Landslide Slope Profile'.
+    sector legend, and exact title 'Landslide slope profile'.
     """
     fig = go.Figure()
 
@@ -122,7 +104,6 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
 
     # 2. Sector background shaded zones + Sector Legend entries
     for sec_name, x0, x1, col in SECTORS_DEF:
-        # Shaded background box
         fig.add_vrect(
             x0=x0,
             x1=x1,
@@ -130,7 +111,6 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             layer="below",
             line_width=0,
         )
-        # Dummy trace for sector legend
         fig.add_trace(
             go.Scatter(
                 x=[None],
@@ -142,34 +122,33 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             )
         )
 
-    # 3. Single surface point per sampling location with stacked labels
-    for dist_x, (sector_name, samples_list) in SAMPLING_STATIONS.items():
+    # 3. Single surface point per sampling location with ONLY clean sample names
+    for dist_x, (sector_name, samples_list, text_pos) in SAMPLING_STATIONS.items():
         z_surf = float(np.interp(dist_x, x_topo, z_topo))
-        sample_names = [s[0] for s in samples_list]
-        is_active_station = campione_attivo in sample_names
+        is_active_station = campione_attivo in samples_list
 
-        # Build clean stacked label
-        lines_label = []
+        # Build clean stacked sample names ONLY (e.g. "ML7<br>ML8" or "<b>ML3</b><br>ML4")
+        label_lines = []
         tooltip_lines = [
             f"<b>Sector</b>: {sector_name}",
             f"<b>Distance</b>: {dist_x:.0f} m from crest",
             f"<b>Surface Elevation</b>: {z_surf:.1f} m a.s.l.",
-            "<b>Samples at this station:</b>",
+            "<b>Samples:</b>",
         ]
 
-        for s_name, s_depth, s_code in samples_list:
+        for s_name in samples_list:
+            spec = SAMPLE_SLOPE_SPECS.get(s_name, (dist_x, z_surf, sector_name, "", s_name))
             if s_name == campione_attivo:
-                lines_label.append(f"<b>▶ {s_name} ({s_depth})</b>")
-                tooltip_lines.append(f"• <b>[ACTIVE] {s_name} ({s_code})</b>: {s_depth}")
+                label_lines.append(f"<b>{s_name}</b>")
+                tooltip_lines.append(f"• <b>[ACTIVE] {s_name}</b> ({spec[3]})")
             else:
-                lines_label.append(f"{s_name} ({s_depth})")
-                tooltip_lines.append(f"• {s_name} ({s_code}): {s_depth}")
+                label_lines.append(s_name)
+                tooltip_lines.append(f"• {s_name} ({spec[3]})")
 
-        stacked_text = "<br>".join(lines_label)
+        clean_label = "<br>".join(label_lines)
         tooltip_html = "<br>".join(tooltip_lines)
 
         if is_active_station:
-            # Highlighted Active Station Point
             sec_col = SECTOR_COLORS.get(sector_name, "red")
             fig.add_trace(
                 go.Scatter(
@@ -177,14 +156,14 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
                     y=[z_surf],
                     mode="markers+text",
                     marker=dict(
-                        size=12,
+                        size=11,
                         color=sec_col,
                         symbol="circle",
                         line=dict(width=2.2, color="black"),
                     ),
-                    text=[stacked_text],
-                    textposition="top right" if dist_x < 250 else "top left",
-                    textfont=dict(size=10, color="black"),
+                    text=[clean_label],
+                    textposition=text_pos,
+                    textfont=dict(size=11, color="black"),
                     hoverinfo="text",
                     hovertext=[tooltip_html],
                     showlegend=False,
@@ -192,16 +171,15 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
                 )
             )
         else:
-            # Neutral Station Point
             fig.add_trace(
                 go.Scatter(
                     x=[dist_x],
                     y=[z_surf],
                     mode="markers+text",
-                    marker=dict(size=7.5, color="rgb(90, 90, 90)", symbol="circle"),
-                    text=[stacked_text],
-                    textposition="top right" if dist_x < 250 else "top left",
-                    textfont=dict(size=8.5, color="rgb(70, 70, 70)"),
+                    marker=dict(size=7, color="rgb(90, 90, 90)", symbol="circle"),
+                    text=[clean_label],
+                    textposition=text_pos,
+                    textfont=dict(size=9.5, color="rgb(60, 60, 60)"),
                     hoverinfo="text",
                     hovertext=[tooltip_html],
                     showlegend=False,
@@ -209,11 +187,10 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
                 )
             )
 
-    # 4. Strict Title: "Landslide Slope Profile"
-    # Visual Ratio: 1 unit on X = 1.6x display space of Y -> scaleratio = 1 / 1.6 = 0.625
+    # 4. Strict Title: "Landslide slope profile" (nothing else)
     fig.update_layout(
         title=dict(
-            text="Landslide Slope Profile",
+            text="Landslide slope profile",
             x=0.5,
             font=dict(size=14, color="black"),
         ),
@@ -231,7 +208,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             showgrid=True,
             gridcolor="lightgrey",
             zeroline=False,
-            range=[y_min_axis, z_max + 12],
+            range=[y_min_axis, z_max + 14],
         ),
         legend=dict(
             orientation="h",
@@ -243,7 +220,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             title=dict(text="<b>Sectors:</b>", font=dict(size=10)),
         ),
         template="plotly_white",
-        margin=dict(l=50, r=20, t=40, b=70),
+        margin=dict(l=50, r=20, t=35, b=70),
         showlegend=True,
     )
     return fig

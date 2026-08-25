@@ -57,11 +57,9 @@ def render_inspection_popover(
 ) -> None:
     """Renders a popover dialog showing 3D cylinder and Landslide Slope Profile."""
     with st.popover("🔍 Inspect 3D Geometry & Slope Location"):
-        st.markdown(f"### 🔍 Spatial Context: **{sample_id}** ({active_category})")
         c_3d, c_slope = st.columns([1.0, 2.5])
 
         with c_3d:
-            st.markdown("#### 🧊 3D Electrode Array")
             active_qps = ottieni_lista_qp_per_categoria(active_category)
             fig_3d = crea_figura_cilindro_3d(
                 quadripoli_attivi=active_qps,
@@ -71,7 +69,6 @@ def render_inspection_popover(
             st.plotly_chart(fig_3d, use_container_width=True, key=f"{key_prefix}_pop_3d")
 
         with c_slope:
-            st.markdown("#### ⛰️ 1:1 True-Scale Landslide Slope Profile")
             fig_slope = crea_profilo_versante_plotly(campione_attivo=sample_id)
             fig_slope.update_layout(height=380)
             st.plotly_chart(fig_slope, use_container_width=True, key=f"{key_prefix}_pop_slope")
@@ -352,7 +349,6 @@ def main() -> None:
             with col3:
                 render_grid_cell(3, sample_list, samples_def[2], "grid_p3")
             with col4:
-                st.markdown("### ⛰️ Landslide Topographic Cross-Section")
                 fig_slope_full = crea_profilo_versante_plotly(campione_attivo=samples_def[2])
                 fig_slope_full.update_layout(height=420)
                 st.plotly_chart(fig_slope_full, use_container_width=True)

@@ -1,27 +1,42 @@
-"""Idealized Landslide Slope Profile showing exact spatial and depth distribution."""
+"""Landslide Slope Profile loaded dynamically from survey CSV files."""
 
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-# Geomorphological Sectors, Spatial Distance X [m], Elevation Z [m], Depth [cm], and Label
+TOPO_DIR = Path("projects/Hyprop_geotom_01Carl/data/raw/topography")
+PROFILO_CSV = TOPO_DIR / "profilo_sampling_point.csv"
+POSIZIONI_CSV = TOPO_DIR / "posizioni_sampling_point.csv"
+
+# Geomorphological Sectors, Spatial Distance X [m], Elevation Z [m a.s.l.], Depth, and Label
 SAMPLE_SLOPE_SPECS: Dict[str, Tuple[float, float, str, str, str]] = {
-    # Sector: Detachment
-    "ML9": (10.0, 90.0, "Detachment Sector", "Depth: -50 cm", "4b (-50 cm)"),
-    "ML7": (36.0, 82.0, "Detachment Sector", "Surface (0 cm)", "3a (0 cm)"),
-    "ML8": (36.0, 77.0, "Detachment Sector", "Depth: -50 cm", "3b (-50 cm)"),
-    # Sector: Counterslope
-    "ML5": (72.0, 73.0, "Counterslope Sector", "Surface (0 cm)", "2a (0 cm)"),
-    "ML6": (72.0, 68.0, "Counterslope Sector", "Depth: -50 cm", "2b (-50 cm)"),
-    # Sector: Steep Slope
-    "ML3": (93.0, 52.0, "Steep Slope Sector", "Surface (0 cm)", "1a (0 cm)"),
-    "ML4": (93.0, 47.0, "Steep Slope Sector", "Depth: -50 cm", "1b (-50 cm)"),
-    "ML1": (108.0, 36.0, "Steep Slope Sector", "Surface (0 cm)", "5a (0 cm)"),
-    # Sector: Undisturbed Basal Outcrop
-    "ML10": (317.0, 10.0, "Undisturbed Basal Clay", "Surface (0 cm)", "6a (0 cm)"),
+    # sample_id: (distance_m, elevation_z_m, sector, depth_label, field_code)
+    "ML9": (10.0, 627.0, "Detachment Sector", "Depth: -50 cm", "4b (-50 cm)"),
+    "ML7": (36.0, 625.0, "Detachment Sector", "Surface (0 cm)", "3a (0 cm)"),
+    "ML8": (36.0, 625.0, "Detachment Sector", "Depth: -50 cm", "3b (-50 cm)"),
+    "ML5": (72.0, 623.0, "Counterslope Sector", "Surface (0 cm)", "2a (0 cm)"),
+    "ML6": (72.0, 623.0, "Counterslope Sector", "Depth: -50 cm", "2b (-50 cm)"),
+    "ML3": (93.0, 619.0, "Steep Slope Sector", "Surface (0 cm)", "1a (0 cm)"),
+    "ML4": (93.0, 619.0, "Steep Slope Sector", "Depth: -50 cm", "1b (-50 cm)"),
+    "ML1": (108.0, 615.0, "Steep Slope Sector", "Surface (0 cm)", "5a (0 cm)"),
+    "ML10": (317.0, 583.0, "Undisturbed Basal Clay", "Surface (0 cm)", "6a (0 cm)"),
+}
+
+# Sector classification and depth specification for samples
+SAMPLE_METADATA: Dict[str, Tuple[str, str, str, bool]] = {
+    # sample_id: (sector, depth_label, field_code, is_deep)
+    "ML9": ("Detachment Sector", "Depth: -50 cm", "4b (-50 cm)", True),
+    "ML7": ("Detachment Sector", "Surface (0 cm)", "3a (0 cm)", False),
+    "ML8": ("Detachment Sector", "Depth: -50 cm", "3b (-50 cm)", True),
+    "ML5": ("Counterslope Sector", "Surface (0 cm)", "2a (0 cm)", False),
+    "ML6": ("Counterslope Sector", "Depth: -50 cm", "2b (-50 cm)", True),
+    "ML3": ("Steep Slope Sector", "Surface (0 cm)", "1a (0 cm)", False),
+    "ML4": ("Steep Slope Sector", "Depth: -50 cm", "1b (-50 cm)", True),
+    "ML1": ("Steep Slope Sector", "Surface (0 cm)", "5a (0 cm)", False),
+    "ML10": ("Undisturbed Basal Clay", "Surface (0 cm)", "6a (0 cm)", False),
 }
 
 SECTOR_COLORS: Dict[str, str] = {
@@ -31,55 +46,88 @@ SECTOR_COLORS: Dict[str, str] = {
     "Undisturbed Basal Clay": "rgb(31, 119, 180)",
 }
 
-TOPO_DIR = Path("projects/Hyprop_geotom_01Carl/data/raw/topography")
+
+def carica_profilo_topografico() -> Tuple[np.ndarray, np.ndarray]:
+    """Carica la curva topografica reale (distance, quota_z) dal file CSV."""
+    if PROFILO_CSV.exists():
+        try:
+            df = pd.read_csv(PROFILO_CSV)
+            if "distance" in df.columns and "quota_z" in df.columns:
+                return df["distance"].to_numpy(dtype=float), df["quota_z"].to_numpy(dtype=float)
+        except Exception:
+            pass
+
+    # Fallback predefinito
+    x_fb = np.array([0, 10, 36, 72, 93, 108, 150, 200, 260, 317, 326], dtype=float)
+    z_fb = np.array([629, 627, 625, 623, 619, 615, 608, 600, 592, 583, 581], dtype=float)
+    return x_fb, z_fb
 
 
-def carica_punti_topografia() -> Tuple[np.ndarray, np.ndarray]:
-    """Carica i punti (X, Z) del profilo topografico da file se presente, o usa i nodi rilevati."""
-    # Controlla se esiste un file topografia dedicato con coordinate X, Z
-    for fn in ["profilo_topografia.csv", "topografia.csv", "profilo.xlsx", "profilo.csv"]:
-        f_path = TOPO_DIR / fn
-        if f_path.exists():
-            try:
-                if f_path.suffix == ".xlsx":
-                    df = pd.read_excel(f_path, sheet_name=0)
-                else:
-                    df = pd.read_csv(f_path)
-                if df.shape[1] >= 2:
-                    x = pd.to_numeric(df.iloc[:, 0], errors="coerce").dropna().to_numpy()
-                    z = pd.to_numeric(df.iloc[:, 1], errors="coerce").dropna().to_numpy()
-                    if len(x) >= 2 and len(x) == len(z):
-                        return x, z
-            except Exception:
-                pass
+def carica_posizioni_campioni(x_topo: np.ndarray, z_topo: np.ndarray) -> Dict[str, Dict[str, Any]]:
+    """Carica le posizioni metriche dei campioni e calcola quota di superficie e profondità."""
+    # Distanze dal CSV se presente
+    dist_map: Dict[str, float] = {
+        "ML9": 10.0,
+        "ML7": 36.0,
+        "ML8": 36.0,
+        "ML5": 72.0,
+        "ML6": 72.0,
+        "ML3": 93.0,
+        "ML4": 93.0,
+        "ML1": 108.0,
+        "ML10": 317.0,
+    }
 
-    # Nodi rilevati lungo il profilo di 350 metri
-    x_topo = np.array([0, 10, 25, 36, 50, 72, 85, 93, 108, 120, 150, 200, 260, 317, 345])
-    z_topo = np.array([100, 95, 88, 82, 77, 73, 62, 52, 36, 25, 20, 15, 12, 10, 8])
-    return x_topo, z_topo
+    if POSIZIONI_CSV.exists():
+        try:
+            df_pos = pd.read_csv(POSIZIONI_CSV, header=None, names=["sample", "distance"])
+            for _, row in df_pos.iterrows():
+                s_id = str(row["sample"]).strip()
+                if s_id in SAMPLE_METADATA:
+                    dist_map[s_id] = float(row["distance"])
+        except Exception:
+            pass
+
+    campioni_dict: Dict[str, Dict[str, Any]] = {}
+    for s_id, (sec, d_lbl, f_code, is_deep) in SAMPLE_METADATA.items():
+        dist_x = dist_map.get(s_id, 0.0)
+        z_surf = float(np.interp(dist_x, x_topo, z_topo))
+        # Visual offset (-2.5 m) for -50cm deep samples
+        z_point = (z_surf - 2.5) if is_deep else z_surf
+
+        campioni_dict[s_id] = {
+            "x": dist_x,
+            "z_surf": z_surf,
+            "z_point": z_point,
+            "sector": sec,
+            "depth_label": d_lbl,
+            "field_code": f_code,
+            "is_deep": is_deep,
+        }
+    return campioni_dict
 
 
 def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
-    """Generates an idealized landslide topographic profile highlighting position and depth."""
+    """Generates the topographic profile using real survey CSV data."""
     fig = go.Figure()
 
-    # 1. Topography curve
-    x_topo, z_topo = carica_punti_topografia()
+    # 1. Real Topography
+    x_topo, z_topo = carica_profilo_topografico()
+    campioni = carica_posizioni_campioni(x_topo, z_topo)
+
     z_min_topo = float(np.min(z_topo))
+    z_max_topo = float(np.max(z_topo))
     y_min_axis = z_min_topo - 5.0  # Asse Y parte da 5 metri sotto la quota più bassa
 
-    x_smooth = np.linspace(float(x_topo[0]), float(x_topo[-1]), 300)
-    z_smooth = np.interp(x_smooth, x_topo, z_topo)
-
-    # Shaded ground topography
+    # Ground surface line and fill
     fig.add_trace(
         go.Scatter(
-            x=x_smooth,
-            y=z_smooth,
+            x=x_topo,
+            y=z_topo,
             mode="lines",
-            line=dict(color="rgb(90, 65, 45)", width=2.5),
+            line=dict(color="rgb(85, 60, 40)", width=2.8),
             fill="tozeroy",
-            fillcolor="rgba(215, 200, 180, 0.35)",
+            fillcolor="rgba(215, 200, 180, 0.4)",
             hoverinfo="skip",
             name="Topographic Surface",
         )
@@ -90,7 +138,7 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
         ("Detachment Sector", 0, 50, "rgba(214, 39, 40, 0.08)"),
         ("Counterslope Sector", 50, 80, "rgba(255, 127, 14, 0.08)"),
         ("Steep Slope Sector", 80, 130, "rgba(44, 160, 44, 0.08)"),
-        ("Undisturbed Basal Clay", 280, float(x_topo[-1]), "rgba(31, 119, 180, 0.08)"),
+        ("Undisturbed Basal Clay", 280, float(x_topo[-1]) + 5, "rgba(31, 119, 180, 0.08)"),
     ]
 
     for _, x0, x1, col in sectors:
@@ -109,52 +157,51 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
         ("ML3", "ML4"),  # 1a (0cm) and 1b (-50cm) at x = 93 m
     ]
     for s_top, s_bot in depth_pairs:
-        top_spec = SAMPLE_SLOPE_SPECS[s_top]
-        bot_spec = SAMPLE_SLOPE_SPECS[s_bot]
+        if s_top in campioni and s_bot in campioni:
+            c_top = campioni[s_top]
+            c_bot = campioni[s_bot]
+            fig.add_trace(
+                go.Scatter(
+                    x=[c_top["x"], c_bot["x"]],
+                    y=[c_top["z_point"], c_bot["z_point"]],
+                    mode="lines",
+                    line=dict(color="rgba(80, 80, 80, 0.6)", width=1.5, dash="dash"),
+                    hoverinfo="skip",
+                    showlegend=False,
+                )
+            )
+
+    # Vertical connector for ML9 (-50cm) at x = 10 m to ground surface
+    if "ML9" in campioni:
+        c_ml9 = campioni["ML9"]
         fig.add_trace(
             go.Scatter(
-                x=[top_spec[0], bot_spec[0]],
-                y=[top_spec[1], bot_spec[1]],
+                x=[c_ml9["x"], c_ml9["x"]],
+                y=[c_ml9["z_surf"], c_ml9["z_point"]],
                 mode="lines",
-                line=dict(color="rgba(100, 100, 100, 0.6)", width=1.5, dash="dash"),
+                line=dict(color="rgba(80, 80, 80, 0.6)", width=1.5, dash="dash"),
                 hoverinfo="skip",
                 showlegend=False,
             )
         )
 
-    # Vertical connector for ML9 (-50cm) at x = 10 m to ground surface
-    ml9_x, ml9_z = SAMPLE_SLOPE_SPECS["ML9"][0], SAMPLE_SLOPE_SPECS["ML9"][1]
-    ground_z_ml9 = float(np.interp(ml9_x, x_topo, z_topo))
-    fig.add_trace(
-        go.Scatter(
-            x=[ml9_x, ml9_x],
-            y=[ground_z_ml9, ml9_z],
-            mode="lines",
-            line=dict(color="rgba(100, 100, 100, 0.6)", width=1.5, dash="dash"),
-            hoverinfo="skip",
-            showlegend=False,
-        )
-    )
-
-    # 4. Inactive samples (Sand_R excluded)
+    # 4. Inactive samples
     other_x, other_y, other_text, other_names = [], [], [], []
-    active_x, active_y, active_text, active_sec, active_depth = None, None, None, None, None
+    active_data = campioni.get(campione_attivo)
 
-    for s_name, (sx, sz, s_sec, s_depth, s_code) in SAMPLE_SLOPE_SPECS.items():
+    for s_id, info in campioni.items():
         tip = (
-            f"<b>Sample {s_name} ({s_code})</b><br>"
-            f"Sector: {s_sec}<br>"
-            f"Profile Distance: {sx:.0f} m<br>"
-            f"{s_depth}<br>"
-            f"Rel. Elevation: {sz:.1f} m"
+            f"<b>Sample {s_id} ({info['field_code']})</b><br>"
+            f"Sector: {info['sector']}<br>"
+            f"Distance from Crest: {info['x']:.0f} m<br>"
+            f"{info['depth_label']}<br>"
+            f"Elevation: {info['z_surf']:.1f} m a.s.l."
         )
-        if s_name == campione_attivo:
-            active_x, active_y, active_text, active_sec, active_depth = sx, sz, tip, s_sec, s_depth
-        else:
-            other_x.append(sx)
-            other_y.append(sz)
+        if s_id != campione_attivo:
+            other_x.append(info["x"])
+            other_y.append(info["z_point"])
             other_text.append(tip)
-            other_names.append(f"{s_name}")
+            other_names.append(s_id)
 
     if other_x:
         fig.add_trace(
@@ -172,13 +219,20 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             )
         )
 
-    # 5. Highlight Active Sample (if in natural samples)
-    if active_x is not None and active_y is not None:
-        sec_col = SECTOR_COLORS.get(active_sec, "red")
+    # 5. Highlight Active Sample
+    if active_data:
+        sec_col = SECTOR_COLORS.get(active_data["sector"], "red")
+        act_tip = (
+            f"<b>Sample {campione_attivo} ({active_data['field_code']})</b><br>"
+            f"Sector: {active_data['sector']}<br>"
+            f"Distance: {active_data['x']:.0f} m<br>"
+            f"{active_data['depth_label']}<br>"
+            f"Elevation: {active_data['z_surf']:.1f} m a.s.l."
+        )
         fig.add_trace(
             go.Scatter(
-                x=[active_x],
-                y=[active_y],
+                x=[active_data["x"]],
+                y=[active_data["z_point"]],
                 mode="markers+text",
                 marker=dict(
                     size=14,
@@ -186,20 +240,21 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
                     symbol="circle",
                     line=dict(width=2.5, color="black"),
                 ),
-                text=[f"<b>{campione_attivo}</b> ({active_depth})"],
+                text=[f"<b>{campione_attivo}</b> ({active_data['depth_label']})"],
                 textposition="bottom center",
                 textfont=dict(size=11, color="black"),
                 hoverinfo="text",
-                hovertext=[active_text],
+                hovertext=[act_tip],
                 name=f"Active: {campione_attivo}",
             )
         )
 
-    titolo = (
-        f"Slope Profile: <b>{campione_attivo}</b> [{active_depth or ''} — {active_sec or ''}]"
-        if active_sec
-        else f"Slope Profile (Lab Reference: {campione_attivo})"
-    )
+    if active_data:
+        d_lbl = active_data["depth_label"]
+        sec_lbl = active_data["sector"]
+        titolo = f"Slope Profile: <b>{campione_attivo}</b> [{d_lbl} - {sec_lbl}]"
+    else:
+        titolo = f"Slope Profile ({campione_attivo})"
     fig.update_layout(
         title=dict(
             text=titolo,
@@ -214,14 +269,14 @@ def crea_profilo_versante_plotly(campione_attivo: str = "ML3") -> go.Figure:
             range=[-10, float(x_topo[-1]) + 15],
         ),
         yaxis=dict(
-            title="Relative Elevation [m]",
+            title="Elevation [m a.s.l.]",
             showgrid=True,
             gridcolor="lightgrey",
             zeroline=False,
-            range=[y_min_axis, float(np.max(z_topo)) + 15],
+            range=[y_min_axis, z_max_topo + 8],
         ),
         template="plotly_white",
-        margin=dict(l=40, r=20, t=35, b=35),
+        margin=dict(l=45, r=20, t=35, b=35),
         showlegend=False,
     )
     return fig

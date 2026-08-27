@@ -456,9 +456,19 @@ def main() -> None:
                 x_name = LABEL_VARIABILI.get(ov_var_x, ov_var_x)
                 y_name = target_opts.get(target_var, target_var)
                 ov_title = f"Multi-Sample Overlay — {y_name} vs {x_name}"
+                is_ov_water_x = ov_var_x in [
+                    "theta_vol_pct",
+                    "contenuto_acqua_grav_pct",
+                    "grado_saturazione_Sr",
+                ]
                 fig_ov.update_layout(
                     title=dict(text=ov_title, x=0.5, font=dict(size=15)),
-                    xaxis=dict(title=x_name, type="log" if ov_log_x else "linear", showgrid=True),
+                    xaxis=dict(
+                        title=x_name,
+                        type="log" if ov_log_x else "linear",
+                        autorange="reversed" if is_ov_water_x else None,
+                        showgrid=True,
+                    ),
                     yaxis=dict(title=y_name, type="log" if ov_log_y else "linear", showgrid=True),
                     template="plotly_white",
                     legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),

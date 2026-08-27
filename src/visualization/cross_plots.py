@@ -122,12 +122,19 @@ def crea_cross_plot_plotly(
                 annotation_font=dict(size=11, color="red"),
             )
 
+    is_water_content_x = var_x in [
+        "theta_vol_pct",
+        "contenuto_acqua_grav_pct",
+        "grado_saturazione_Sr",
+    ]
+
     titolo = titolo_personalizzato or f"Sample {campione} — {y_label} vs {x_label}"
     fig.update_layout(
         title=dict(text=titolo, x=0.5, font=dict(size=15)),
         xaxis=dict(
             title=x_label,
             type="log" if log_x else "linear",
+            autorange="reversed" if is_water_content_x else None,
             showgrid=True,
             gridcolor="lightgrey",
             zeroline=False,
@@ -210,6 +217,8 @@ def crea_cross_plot_matplotlib(
         ax.set_xscale("log")
     if log_y:
         ax.set_yscale("log")
+    if var_x in ["theta_vol_pct", "contenuto_acqua_grav_pct", "grado_saturazione_Sr"]:
+        ax.invert_xaxis()
 
     ax.set_xlabel(x_label, fontsize=12)
     ax.set_ylabel("Calibrated Apparent Resistivity ρ₂₅ [Ω·m]", fontsize=12)

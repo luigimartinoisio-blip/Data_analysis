@@ -145,11 +145,13 @@ def render_single_panel_view(
             key=f"{key_prefix}_vy",
         )
 
-        col_c1, col_c2 = st.columns(2)
+        col_c1, col_c2, col_c3 = st.columns([1, 1, 1.2])
         with col_c1:
             log_x = st.checkbox("Log X", value=("suzione" in var_x), key=f"{key_prefix}_logx")
         with col_c2:
             log_y = st.checkbox("Log Y", value=False, key=f"{key_prefix}_logy")
+        with col_c3:
+            show_aep = st.checkbox("AEPs Marker", value=False, key=f"{key_prefix}_aep")
 
         filter_qc = st.checkbox("Filter Reciprocal Error", value=False, key=f"{key_prefix}_fqc")
         qc_thresh = (
@@ -173,6 +175,7 @@ def render_single_panel_view(
                 soglia_qc_eps=qc_thresh,
                 log_x=log_x,
                 log_y=log_y,
+                mostra_aep=show_aep,
                 titolo_personalizzato=title_text,
             )
             fig_plot.update_layout(height=520)
@@ -235,7 +238,7 @@ def render_grid_cell(
                 key=f"{key_prefix}_y",
             )
 
-        c_opt1, c_opt2, c_qc = st.columns([1, 1, 2])
+        c_opt1, c_opt2, c_qc, c_aep = st.columns([1, 1, 1.6, 1.2])
         with c_opt1:
             log_x = st.checkbox(
                 "Log X",
@@ -251,6 +254,8 @@ def render_grid_cell(
                 key=f"{key_prefix}_fqc",
             )
             qc_thresh = 5.0
+        with c_aep:
+            show_aep = st.checkbox("AEPs", value=False, key=f"{key_prefix}_aep")
 
         render_inspection_popover(sample_sel, cat_sel, f"{key_prefix}_grid_insp")
 
@@ -266,6 +271,7 @@ def render_grid_cell(
                 soglia_qc_eps=qc_thresh,
                 log_x=log_x,
                 log_y=log_y,
+                mostra_aep=show_aep,
                 titolo_personalizzato=title_text,
             )
             fig_plot.update_layout(height=420, margin=dict(l=40, r=20, t=40, b=60))

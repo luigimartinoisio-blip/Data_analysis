@@ -13,6 +13,7 @@ from src.visualization.config import (
     LABEL_VARIABILI,
     MARKER_DEFAULT,
     PALETTE_COLORI,
+    calcola_valore_aep_per_variabile,
 )
 
 
@@ -37,9 +38,10 @@ def crea_cross_plot_plotly(
     soglia_qc_eps: float = 5.0,
     log_x: bool = False,
     log_y: bool = False,
+    mostra_aep: bool = False,
     titolo_personalizzato: Optional[str] = None,
 ) -> go.Figure:
-    """Generates an interactive Plotly cross-plot with rich hover tooltips."""
+    """Generates an interactive Plotly cross-plot with rich hover tooltips and optional AEPs."""
     fig = go.Figure()
     qps = ottieni_lista_qp_per_categoria(categoria_o_qp)
 
@@ -106,6 +108,20 @@ def crea_cross_plot_plotly(
                 )
             )
 
+    # Air Entry Point (AEPs) vertical marker
+    if mostra_aep and campione:
+        x_aep = calcola_valore_aep_per_variabile(df, campione, var_x)
+        if x_aep is not None and not np.isnan(x_aep):
+            fig.add_vline(
+                x=x_aep,
+                line_dash="dot",
+                line_color="red",
+                line_width=1.2,
+                annotation_text="AEPs",
+                annotation_position="top right",
+                annotation_font=dict(size=11, color="red"),
+            )
+
     titolo = titolo_personalizzato or f"Sample {campione} — {y_label} vs {x_label}"
     fig.update_layout(
         title=dict(text=titolo, x=0.5, font=dict(size=15)),
@@ -148,10 +164,11 @@ def crea_cross_plot_matplotlib(
     soglia_qc_eps: float = 5.0,
     log_x: bool = False,
     log_y: bool = False,
+    mostra_aep: bool = False,
     figsize: tuple = (10, 6),
     dpi: int = 300,
 ) -> plt.Figure:
-    """Generates high-resolution publication-quality figure with standard palette."""
+    """Generates high-resolution publication-quality figure with optional AEPs marker."""
     fig, ax = plt.subplots(figsize=figsize, dpi=dpi)
     qps = ottieni_lista_qp_per_categoria(categoria_o_qp)
     campione = df["campione_id"].iloc[0] if "campione_id" in df.columns else ""
@@ -183,6 +200,11 @@ def crea_cross_plot_matplotlib(
             linewidth=1.8,
             markersize=6,
         )
+
+    if mostra_aep and campione:
+        x_aep = calcola_valore_aep_per_variabile(df, campione, var_x)
+        if x_aep is not None and not np.isnan(x_aep):
+            ax.axvline(x=x_aep, color="red", linestyle=":", linewidth=1.2, label="AEPs")
 
     if log_x:
         ax.set_xscale("log")

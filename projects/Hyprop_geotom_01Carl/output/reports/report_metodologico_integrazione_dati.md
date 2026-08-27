@@ -138,6 +138,28 @@ Le letture dei tensiometri sono espresse rigorosamente in $\text{kPa}$ ($1\text{
 \psi_{\text{mean}}(t) = \sqrt{\psi_{\text{up}}(t) \cdot \psi_{\text{low}}(t)} \quad [\text{kPa}]
 \]
 
+### 6.4 Air Entry Point ($\text{AEPs}$) e Parametro $\alpha$ di van Genuchten
+La suzione corrispondente al punto di entrata dell'aria nel terreno ($\psi_{\text{AEP}}$) è stimata a partire dal parametro di scala $\alpha$ del modello di ritenzione idrica di van Genuchten (1980):
+
+\[
+\psi_{\text{AEP}} = \frac{1}{\alpha}\text{ [hPa]} = \frac{1}{10 \cdot \alpha}\text{ [kPa]}
+\]
+
+Mediante interpolazione delle serie temporali idrologiche, per ciascun campione vengono identificati i valori di stato associati all'$\text{AEPs}$:
+
+| Campione | $\alpha$ [$\text{hPa}^{-1}$] | $\psi_{\text{AEP}}$ [$\text{kPa}$] | Tempo $t_{\text{AEP}}$ [h] | Contenuto d'Acqua $\theta_{\text{AEP}}$ [%] | $\psi_{\text{up, AEP}}$ [$\text{kPa}$] | $\psi_{\text{low, AEP}}$ [$\text{kPa}$] |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **`ML1`** | $0.02490$ | **$4.02$** | $11.92$ | $42.11$ | $4.75$ | $3.39$ |
+| **`ML3`** | $0.03710$ | **$2.70$** | $6.93$ | $44.63$ | $6.24$ | $1.17$ |
+| **`ML4`** | $0.06310$ | **$1.58$** | $10.95$ | $40.25$ | $1.73$ | $1.45$ |
+| **`ML5`** | $0.00514$ | **$19.46$** | $17.20$ | $36.67$ | $25.04$ | $15.14$ |
+| **`ML6`** | $0.00631$ | **$15.85$** | $15.87$ | $42.39$ | $21.05$ | $11.96$ |
+| **`ML7`** | $0.07420$ | **$1.35$** | $20.00$ | $33.32$ | $1.47$ | $1.23$ |
+| **`ML8`** | $0.08390$ | **$1.19$** | $7.25$ | $37.78$ | $1.34$ | $1.05$ |
+| **`ML9`** | $0.03660$ | **$2.73$** | $9.65$ | $39.06$ | $3.12$ | $2.39$ |
+| **`ML10`** | $0.02310$ | **$4.33$** | $7.48$ | $45.31$ | $7.64$ | $2.49$ |
+| **`Sand_R`** | $0.01790$ | **$5.59$** | $69.62$ | $13.11$ | $5.71$ | $5.46$ |
+
 ---
 
 ## 7. Medie Geometriche di Resistività Corretta per Categoria

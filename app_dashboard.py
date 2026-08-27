@@ -1,4 +1,4 @@
-"""Interactive Hydrogeophysical Dashboard: GeoTom & HYPROP."""
+"""Interactive Multi-Panel Dashboard for Hydrogeophysical Data Analysis."""
 
 from pathlib import Path
 from typing import List
@@ -19,35 +19,41 @@ from src.visualization.landslide_profile import (
 )
 
 st.set_page_config(
-    page_title="Hydrogeophysical Dashboard | GeoTom - HYPROP",
+    page_title="Hydrogeophysical Analysis: GeoTom & HYPROP2",
     page_icon="⚡",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
-
-DATA_DIR = Path("projects/Hyprop_geotom_01Carl/data/processed/tabelle_campioni")
-QC_REPORT_FILE = Path("projects/Hyprop_geotom_01Carl/data/processed/report_qualita_reciproci.csv")
 
 
 @st.cache_data
 def load_sample_list() -> List[str]:
-    files = sorted(list(DATA_DIR.glob("*_serie_integrata.csv")))
-    return [f.name.replace("_serie_integrata.csv", "") for f in files]
+    """Loads available sample IDs from processed data directory."""
+    data_dir = Path("projects/Hyprop_geotom_01Carl/data/processed/tabelle_campioni")
+    if not data_dir.exists():
+        return []
+    files = list(data_dir.glob("*_serie_integrata.csv"))
+    return sorted([f.name.replace("_serie_integrata.csv", "") for f in files])
 
 
 @st.cache_data
 def load_sample_data(sample_id: str) -> pd.DataFrame:
-    file_path = DATA_DIR / f"{sample_id}_serie_integrata.csv"
-    if file_path.exists():
-        return pd.read_csv(file_path)
-    return pd.DataFrame()
+    """Loads integrated CSV for a given sample ID."""
+    p = Path(
+        f"projects/Hyprop_geotom_01Carl/data/processed/tabelle_campioni/{sample_id}_serie_integrata.csv"
+    )
+    if not p.exists():
+        return pd.DataFrame()
+    return pd.read_csv(p)
 
 
 @st.cache_data
 def load_qc_report() -> pd.DataFrame:
-    if QC_REPORT_FILE.exists():
-        return pd.read_csv(QC_REPORT_FILE)
-    return pd.DataFrame()
+    """Loads reciprocal error summary table."""
+    p = Path("projects/Hyprop_geotom_01Carl/data/processed/report_qualita_reciproci.csv")
+    if not p.exists():
+        return pd.DataFrame()
+    return pd.read_csv(p)
 
 
 def render_inspection_popover(
@@ -86,11 +92,11 @@ def render_single_panel_view(
     default_sample: str,
     key_prefix: str,
 ) -> None:
-    """Renders single panel view with controls, plot, and popover inspection."""
-    col_ctrl, col_plot = st.columns([1.2, 3.8])
+    """Renders a full-width interactive cross-plot with sidebar controls."""
+    col_ctrl, col_plot = st.columns([1.1, 3.9])
 
     with col_ctrl:
-        st.markdown("#### ⚙️ Parameters")
+        st.markdown("#### Configuration")
         def_idx = sample_list.index(default_sample) if default_sample in sample_list else 0
         sample_sel = st.selectbox("Sample", sample_list, index=def_idx, key=f"{key_prefix}_sample")
         df_sample = load_sample_data(sample_sel)
@@ -103,9 +109,9 @@ def render_single_panel_view(
         var_x_opts = {
             "theta_vol_pct": "Volumetric Water Content θ [Vol%]",
             "ore_trascorse_da_t0": "Elapsed Time [hours]",
-            "suzione_media_kpa": "Matric Suction Mean ψ_mean [kPa]",
-            "suzione_top_estesa_kpa": "Matric Suction Upper ψ_up [kPa]",
-            "suzione_bottom_estesa_kpa": "Matric Suction Lower ψ_low [kPa]",
+            "suzione_media_kpa": "Matric Suction [kPa]",
+            "suzione_top_estesa_kpa": "Matric Suction Upper [kPa]",
+            "suzione_bottom_estesa_kpa": "Matric Suction Lower [kPa]",
             "log10_suzione_kpa": "log₁₀(Suction [kPa])",
             "grado_saturazione_Sr": "Degree of Saturation Sr [-]",
             "peso_netto_g": "Net Weight [g]",
@@ -119,16 +125,14 @@ def render_single_panel_view(
         )
 
         var_y_opts = {
-            "rho_25": "Calibrated Resistivity ρ₂₅ (Individual Quadrupoles) [Ω·m]",
-            "rho25_geom_categories": "Geometric Mean Resistivity (All 4 Categories) [Ω·m]",
-            "rho25_geom_upper": "Geometric Mean Upper ρ₂₅,up [Ω·m]",
-            "rho25_geom_lower": "Geometric Mean Lower ρ₂₅,low [Ω·m]",
-            "rho25_geom_dipole": "Geometric Mean Dipole-dipole ρ₂₅,dip [Ω·m]",
-            "rho25_geom_wenner": "Geometric Mean Wenner ρ₂₅,wen [Ω·m]",
-            "suzioni_entrambe": "Both Tensiometers & Mean Suction [kPa]",
-            "suzione_media_kpa": "Matric Suction Mean ψ_mean [kPa]",
-            "suzione_top_estesa_kpa": "Matric Suction Upper ψ_up [kPa]",
-            "suzione_bottom_estesa_kpa": "Matric Suction Lower ψ_low [kPa]",
+            "rho_25": "Calibrated Resistivity ρ₂₅ [Ω·m]",
+            "rho25_geom_upper": "Geometric Mean Upper ρ₂₅ [Ω·m]",
+            "rho25_geom_lower": "Geometric Mean Lower ρ₂₅ [Ω·m]",
+            "rho25_geom_dipole": "Geometric Mean Dipole-dipole ρ₂₅ [Ω·m]",
+            "rho25_geom_wenner": "Geometric Mean Wenner ρ₂₅ [Ω·m]",
+            "suzione_media_kpa": "Matric Suction [kPa]",
+            "suzione_top_estesa_kpa": "Matric Suction Upper [kPa]",
+            "suzione_bottom_estesa_kpa": "Matric Suction Lower [kPa]",
             "theta_vol_pct": "Water Content θ [Vol%]",
             "peso_netto_g": "Net Weight [g]",
             "temperatura_C": "Temperature [°C]",
@@ -143,9 +147,7 @@ def render_single_panel_view(
 
         col_c1, col_c2 = st.columns(2)
         with col_c1:
-            log_x = st.checkbox(
-                "Log X", value=(var_x in ["suzione_media_kpa"]), key=f"{key_prefix}_logx"
-            )
+            log_x = st.checkbox("Log X", value=("suzione" in var_x), key=f"{key_prefix}_logx")
         with col_c2:
             log_y = st.checkbox("Log Y", value=False, key=f"{key_prefix}_logy")
 
@@ -173,20 +175,19 @@ def render_single_panel_view(
                 log_y=log_y,
                 titolo_personalizzato=title_text,
             )
-            st.plotly_chart(fig_plot, use_container_width=True, key=f"{key_prefix}_fig_plot")
-        else:
-            st.warning(f"No data available for sample {sample_sel}.")
+            fig_plot.update_layout(height=520)
+            st.plotly_chart(fig_plot, use_container_width=True, key=f"{key_prefix}_chart")
 
 
 def render_grid_cell(
-    panel_id: int,
+    cell_id: int,
     sample_list: List[str],
     default_sample: str,
     key_prefix: str,
 ) -> None:
-    """Renders a compact panel cell for the 2x2 grid layout with popover inspection."""
+    """Renders a single cell in the multi-panel comparison grid."""
     with st.container():
-        st.markdown(f"### 📊 Plot {panel_id}")
+        st.markdown(f"**Plot #{cell_id}**")
 
         # Inline compact controls
         c_s, c_cat, c_x, c_y = st.columns([1.2, 1.2, 1.2, 1.2])
@@ -201,7 +202,7 @@ def render_grid_cell(
         with c_x:
             var_x_opts = {
                 "theta_vol_pct": "θ [Vol%]",
-                "suzione_media_kpa": "ψ_mean [kPa]",
+                "suzione_media_kpa": "ψ [kPa]",
                 "suzione_top_estesa_kpa": "ψ_up [kPa]",
                 "suzione_bottom_estesa_kpa": "ψ_low [kPa]",
                 "ore_trascorse_da_t0": "Time [h]",
@@ -216,14 +217,12 @@ def render_grid_cell(
             )
         with c_y:
             var_y_opts = {
-                "rho_25": "ρ₂₅ (Quadrupoles) [Ω·m]",
-                "rho25_geom_categories": "ρ₂₅ (All Geom Means) [Ω·m]",
-                "rho25_geom_upper": "ρ₂₅,up Geom Mean [Ω·m]",
-                "rho25_geom_lower": "ρ₂₅,low Geom Mean [Ω·m]",
-                "rho25_geom_dipole": "ρ₂₅,dip Geom Mean [Ω·m]",
-                "rho25_geom_wenner": "ρ₂₅,wen Geom Mean [Ω·m]",
-                "suzioni_entrambe": "Both Tensiometers [kPa]",
-                "suzione_media_kpa": "ψ_mean [kPa]",
+                "rho_25": "ρ₂₅ [Ω·m]",
+                "rho25_geom_upper": "ρ₂₅,up [Ω·m]",
+                "rho25_geom_lower": "ρ₂₅,low [Ω·m]",
+                "rho25_geom_dipole": "ρ₂₅,dip [Ω·m]",
+                "rho25_geom_wenner": "ρ₂₅,wen [Ω·m]",
+                "suzione_media_kpa": "ψ [kPa]",
                 "suzione_top_estesa_kpa": "ψ_up [kPa]",
                 "suzione_bottom_estesa_kpa": "ψ_low [kPa]",
                 "theta_vol_pct": "θ [Vol%]",
@@ -240,7 +239,7 @@ def render_grid_cell(
         with c_opt1:
             log_x = st.checkbox(
                 "Log X",
-                value=(var_x == "suzione_media_kpa"),
+                value=("suzione" in var_x),
                 key=f"{key_prefix}_lx",
             )
         with c_opt2:
@@ -286,70 +285,33 @@ def main() -> None:
         return
 
     # --- MAIN NAVIGATION TABS ---
-    tab_single, tab_grid, tab_overlay, tab_data, tab_qc, tab_method = st.tabs(
+    tab_single, tab_grid, tab_overlay, tab_data, tab_qc = st.tabs(
         [
             "📈 Single Panel View",
             "🔲 Grid Comparison (Quadro 2x2)",
             "🌐 Multi-Sample Overlay",
             "📋 Data Tables",
             "🛡️ Reciprocal QC Report",
-            "📖 Methodology Report",
         ]
     )
 
     # 1. SINGLE PANEL VIEW
     with tab_single:
-        render_single_panel_view(
-            sample_list=sample_list,
-            default_sample="ML3" if "ML3" in sample_list else sample_list[0],
-            key_prefix="single_p1",
-        )
+        st.subheader("📊 Single Sample Detailed Analysis")
+        render_single_panel_view(sample_list, default_sample="ML3", key_prefix="single")
 
-        with st.expander("ℹ️ Field Sampling Depths & Landslide Sector Specifications"):
-            c1, c2, c3, c4 = st.columns(4)
-            with c1:
-                st.markdown(
-                    "**Detachment Sector (0 - 45 m)**\n"
-                    "- `ML7` (3a): Surface (0 cm, x=36m)\n"
-                    "- `ML8` (3b): Depth (-50 cm, x=36m)\n"
-                    "- `ML9` (4b): Depth (-50 cm, x=10m)"
-                )
-            with c2:
-                st.markdown(
-                    "**Counterslope Sector (45 - 75 m)**\n"
-                    "- `ML5` (2a): Surface (0 cm, x=72m)\n"
-                    "- `ML6` (2b): Depth (-50 cm, x=72m)"
-                )
-            with c3:
-                st.markdown(
-                    "**Steep Slope Sector (75 - 112 m)**\n"
-                    "- `ML3` (1a): Surface (0 cm, x=93m)\n"
-                    "- `ML4` (1b): Depth (-50 cm, x=93m)\n"
-                    "- `ML1` (5a): Surface (0 cm, x=108m)"
-                )
-            with c4:
-                st.markdown(
-                    "**Outside Landslide (> 112 m)**\n"
-                    "- `ML10` (6a): Surface (0 cm, x=317m)\n"
-                    "*(Undisturbed basal clay)*"
-                )
-
-    # 2. GRID COMPARISON (QUADRO 2x2)
+    # 2. MULTI-PANEL GRID
     with tab_grid:
-        st.subheader("🔲 Grid Comparison View (Quadro)")
+        st.subheader("🔲 Multi-Panel Comparative Grid")
         n_plots = st.radio(
-            "Select Number of Plots to Compare",
+            "Select Number of Concurrent Panels",
             [2, 3, 4],
-            index=0,
+            index=2,
             horizontal=True,
-            help="2 plots: side-by-side. 3 plots: 2 on row 1, 1 on row 2. 4 plots: 2x2 grid.",
+            help="Compare 2, 3, or 4 independent plots simultaneously.",
         )
 
-        default_samples = ["ML3", "ML7", "ML9", "Sand_R"]
-        samples_def = [
-            s if s in sample_list else sample_list[i % len(sample_list)]
-            for i, s in enumerate(default_samples)
-        ]
+        samples_def = ["ML3", "ML7", "ML5", "ML1"]
 
         if n_plots == 2:
             col1, col2 = st.columns(2)
@@ -404,13 +366,13 @@ def main() -> None:
             )
             target_opts = {
                 **ETICHETTE_QP,
-                "rho25_geom_upper": "Geometric Mean Upper (Ring 1-2)",
-                "rho25_geom_lower": "Geometric Mean Lower (Ring 3-4)",
-                "rho25_geom_dipole": "Geometric Mean Dipole-dipole",
-                "rho25_geom_wenner": "Geometric Mean Wenner",
-                "suzione_top_estesa_kpa": "Matric Suction Upper ψ_up [kPa]",
-                "suzione_bottom_estesa_kpa": "Matric Suction Lower ψ_low [kPa]",
-                "suzione_media_kpa": "Matric Suction Mean ψ_mean [kPa]",
+                "rho25_geom_upper": "Geometric Mean Upper ρ₂₅",
+                "rho25_geom_lower": "Geometric Mean Lower ρ₂₅",
+                "rho25_geom_dipole": "Geometric Mean Dipole-dipole ρ₂₅",
+                "rho25_geom_wenner": "Geometric Mean Wenner ρ₂₅",
+                "suzione_top_estesa_kpa": "Matric Suction Upper [kPa]",
+                "suzione_bottom_estesa_kpa": "Matric Suction Lower [kPa]",
+                "suzione_media_kpa": "Matric Suction [kPa]",
             }
             target_var = st.selectbox(
                 "Variable / Quadrupole to Overlay",
@@ -522,24 +484,6 @@ def main() -> None:
             st.dataframe(df_qc_rep, use_container_width=True)
         else:
             st.info("QC report is not available.")
-
-    # 6. METHODOLOGY REPORT
-    with tab_method:
-        st.subheader("📖 Technical & Methodological Integration Report")
-        report_path = Path(
-            "projects/Hyprop_geotom_01Carl/output/reports/methodology_data_integration_report.md"
-        )
-        if report_path.exists():
-            report_text = report_path.read_text(encoding="utf-8")
-            st.download_button(
-                label="📥 Download Methodology Report (.md)",
-                data=report_text.encode("utf-8"),
-                file_name="methodology_data_integration_report.md",
-                mime="text/markdown",
-            )
-            st.markdown(report_text)
-        else:
-            st.info("Methodology report document not found.")
 
 
 if __name__ == "__main__":

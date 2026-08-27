@@ -101,9 +101,11 @@ def render_single_panel_view(
         cat_sel = st.selectbox("Category / Pair", cat_options, index=0, key=f"{key_prefix}_cat")
 
         var_x_opts = {
-            "ore_trascorse_da_t0": "Elapsed Time [hours]",
             "theta_vol_pct": "Volumetric Water Content θ [Vol%]",
-            "suzione_media_kpa": "Matric Suction ψ [kPa]",
+            "ore_trascorse_da_t0": "Elapsed Time [hours]",
+            "suzione_media_kpa": "Matric Suction Mean ψ_mean [kPa]",
+            "suzione_top_estesa_kpa": "Matric Suction Upper ψ_up [kPa]",
+            "suzione_bottom_estesa_kpa": "Matric Suction Lower ψ_low [kPa]",
             "log10_suzione_kpa": "log₁₀(Suction [kPa])",
             "grado_saturazione_Sr": "Degree of Saturation Sr [-]",
             "peso_netto_g": "Net Weight [g]",
@@ -112,14 +114,22 @@ def render_single_panel_view(
             "X-Axis",
             list(var_x_opts.keys()),
             format_func=lambda k: var_x_opts[k],
-            index=1,
+            index=0,
             key=f"{key_prefix}_vx",
         )
 
         var_y_opts = {
-            "rho_25": "Calibrated Resistivity ρ₂₅ [Ω·m]",
+            "rho_25": "Calibrated Resistivity ρ₂₅ (Individual Quadrupoles) [Ω·m]",
+            "rho25_geom_categories": "Geometric Mean Resistivity (All 4 Categories) [Ω·m]",
+            "rho25_geom_upper": "Geometric Mean Upper ρ₂₅,up [Ω·m]",
+            "rho25_geom_lower": "Geometric Mean Lower ρ₂₅,low [Ω·m]",
+            "rho25_geom_dipole": "Geometric Mean Dipole-dipole ρ₂₅,dip [Ω·m]",
+            "rho25_geom_wenner": "Geometric Mean Wenner ρ₂₅,wen [Ω·m]",
+            "suzioni_entrambe": "Both Tensiometers & Mean Suction [kPa]",
+            "suzione_media_kpa": "Matric Suction Mean ψ_mean [kPa]",
+            "suzione_top_estesa_kpa": "Matric Suction Upper ψ_up [kPa]",
+            "suzione_bottom_estesa_kpa": "Matric Suction Lower ψ_low [kPa]",
             "theta_vol_pct": "Water Content θ [Vol%]",
-            "suzione_media_kpa": "Matric Suction ψ [kPa]",
             "peso_netto_g": "Net Weight [g]",
             "temperatura_C": "Temperature [°C]",
         }
@@ -191,7 +201,9 @@ def render_grid_cell(
         with c_x:
             var_x_opts = {
                 "theta_vol_pct": "θ [Vol%]",
-                "suzione_media_kpa": "ψ [kPa]",
+                "suzione_media_kpa": "ψ_mean [kPa]",
+                "suzione_top_estesa_kpa": "ψ_up [kPa]",
+                "suzione_bottom_estesa_kpa": "ψ_low [kPa]",
                 "ore_trascorse_da_t0": "Time [h]",
                 "grado_saturazione_Sr": "Sr [-]",
             }
@@ -204,9 +216,17 @@ def render_grid_cell(
             )
         with c_y:
             var_y_opts = {
-                "rho_25": "ρ₂₅ [Ω·m]",
+                "rho_25": "ρ₂₅ (Quadrupoles) [Ω·m]",
+                "rho25_geom_categories": "ρ₂₅ (All Geom Means) [Ω·m]",
+                "rho25_geom_upper": "ρ₂₅,up Geom Mean [Ω·m]",
+                "rho25_geom_lower": "ρ₂₅,low Geom Mean [Ω·m]",
+                "rho25_geom_dipole": "ρ₂₅,dip Geom Mean [Ω·m]",
+                "rho25_geom_wenner": "ρ₂₅,wen Geom Mean [Ω·m]",
+                "suzioni_entrambe": "Both Tensiometers [kPa]",
+                "suzione_media_kpa": "ψ_mean [kPa]",
+                "suzione_top_estesa_kpa": "ψ_up [kPa]",
+                "suzione_bottom_estesa_kpa": "ψ_low [kPa]",
                 "theta_vol_pct": "θ [Vol%]",
-                "suzione_media_kpa": "ψ [kPa]",
             }
             var_y = st.selectbox(
                 "Y-Axis",
@@ -266,13 +286,14 @@ def main() -> None:
         return
 
     # --- MAIN NAVIGATION TABS ---
-    tab_single, tab_grid, tab_overlay, tab_data, tab_qc = st.tabs(
+    tab_single, tab_grid, tab_overlay, tab_data, tab_qc, tab_method = st.tabs(
         [
             "📈 Single Panel View",
             "🔲 Grid Comparison (Quadro 2x2)",
             "🌐 Multi-Sample Overlay",
             "📋 Data Tables",
             "🛡️ Reciprocal QC Report",
+            "📖 Methodology Report",
         ]
     )
 
@@ -381,24 +402,36 @@ def main() -> None:
                 if all(s in sample_list for s in ["ML3", "ML7", "Sand_R"])
                 else sample_list[:3],
             )
-            target_qp = st.selectbox(
-                "Quadrupole / Pair",
-                list(ETICHETTE_QP.keys()),
+            target_opts = {
+                **ETICHETTE_QP,
+                "rho25_geom_upper": "Geometric Mean Upper (Ring 1-2)",
+                "rho25_geom_lower": "Geometric Mean Lower (Ring 3-4)",
+                "rho25_geom_dipole": "Geometric Mean Dipole-dipole",
+                "rho25_geom_wenner": "Geometric Mean Wenner",
+                "suzione_top_estesa_kpa": "Matric Suction Upper ψ_up [kPa]",
+                "suzione_bottom_estesa_kpa": "Matric Suction Lower ψ_low [kPa]",
+                "suzione_media_kpa": "Matric Suction Mean ψ_mean [kPa]",
+            }
+            target_var = st.selectbox(
+                "Variable / Quadrupole to Overlay",
+                list(target_opts.keys()),
                 index=0,
-                format_func=lambda k: ETICHETTE_QP[k],
+                format_func=lambda k: target_opts[k],
             )
             ov_var_x = st.selectbox(
                 "X-Axis",
                 [
                     "theta_vol_pct",
                     "suzione_media_kpa",
+                    "suzione_top_estesa_kpa",
+                    "suzione_bottom_estesa_kpa",
                     "ore_trascorse_da_t0",
                     "grado_saturazione_Sr",
                 ],
                 format_func=lambda k: LABEL_VARIABILI.get(k, k),
                 index=0,
             )
-            ov_log_x = st.checkbox("Log X", value=(ov_var_x == "suzione_media_kpa"), key="ov_logx")
+            ov_log_x = st.checkbox("Log X", value=("suzione" in ov_var_x), key="ov_logx")
             ov_log_y = st.checkbox("Log Y", value=False, key="ov_logy")
             ov_filtra_qc = st.checkbox(
                 "Filter Reciprocal Error (ε_rec < 5%)", value=False, key="ov_fqc"
@@ -422,22 +455,30 @@ def main() -> None:
 
                 for s_idx, s_id in enumerate(selected_samples):
                     df_s = load_sample_data(s_id)
-                    col_rho = f"rho25_{target_qp}"
-                    col_eps = f"eps_{target_qp}"
-                    if col_rho in df_s.columns:
+                    col_target = (
+                        target_var
+                        if target_var.startswith(("rho25_geom_", "suzione_"))
+                        else f"rho25_{target_var}"
+                    )
+                    col_eps = (
+                        f"eps_{target_var}"
+                        if not target_var.startswith(("rho25_geom_", "suzione_"))
+                        else None
+                    )
+                    if col_target in df_s.columns:
                         df_s_filt = df_s.copy()
-                        if ov_filtra_qc and col_eps in df_s_filt.columns:
+                        if ov_filtra_qc and col_eps and col_eps in df_s_filt.columns:
                             df_s_filt = df_s_filt[
                                 (df_s_filt[col_eps] < 5.0) | (df_s_filt[col_eps].isna())
                             ]
 
-                        df_s_valid = df_s_filt.dropna(subset=[ov_var_x, col_rho])
+                        df_s_valid = df_s_filt.dropna(subset=[ov_var_x, col_target])
                         fig_ov.add_trace(
                             go.Scatter(
                                 x=df_s_valid[ov_var_x],
-                                y=df_s_valid[col_rho],
+                                y=df_s_valid[col_target],
                                 mode="lines+markers",
-                                name=f"{s_id} ({ETICHETTE_QP.get(target_qp, target_qp)})",
+                                name=f"{s_id} ({target_opts.get(target_var, target_var)})",
                                 marker=dict(size=7),
                                 line=dict(
                                     width=2, color=palette_samples[s_idx % len(palette_samples)]
@@ -445,15 +486,12 @@ def main() -> None:
                             )
                         )
                 x_name = LABEL_VARIABILI.get(ov_var_x, ov_var_x)
-                ov_title = f"Multi-Sample — {ETICHETTE_QP.get(target_qp, target_qp)} vs {x_name}"
+                y_name = target_opts.get(target_var, target_var)
+                ov_title = f"Multi-Sample Overlay — {y_name} vs {x_name}"
                 fig_ov.update_layout(
                     title=dict(text=ov_title, x=0.5, font=dict(size=15)),
                     xaxis=dict(title=x_name, type="log" if ov_log_x else "linear", showgrid=True),
-                    yaxis=dict(
-                        title="Calibrated Resistivity ρ₂₅ [Ω·m]",
-                        type="log" if ov_log_y else "linear",
-                        showgrid=True,
-                    ),
+                    yaxis=dict(title=y_name, type="log" if ov_log_y else "linear", showgrid=True),
                     template="plotly_white",
                     legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
                     margin=dict(l=60, r=40, t=50, b=80),
@@ -484,6 +522,24 @@ def main() -> None:
             st.dataframe(df_qc_rep, use_container_width=True)
         else:
             st.info("QC report is not available.")
+
+    # 6. METHODOLOGY REPORT
+    with tab_method:
+        st.subheader("📖 Technical & Methodological Integration Report")
+        report_path = Path(
+            "projects/Hyprop_geotom_01Carl/output/reports/methodology_data_integration_report.md"
+        )
+        if report_path.exists():
+            report_text = report_path.read_text(encoding="utf-8")
+            st.download_button(
+                label="📥 Download Methodology Report (.md)",
+                data=report_text.encode("utf-8"),
+                file_name="methodology_data_integration_report.md",
+                mime="text/markdown",
+            )
+            st.markdown(report_text)
+        else:
+            st.info("Methodology report document not found.")
 
 
 if __name__ == "__main__":

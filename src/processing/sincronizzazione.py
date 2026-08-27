@@ -327,6 +327,56 @@ class ElaboratoreCampioneIntegrato:
                     riga_record[f"rho25_W{num_w}"] = round(rho25_w, 3)
                 else:
                     riga_record[f"rho25_W{num_w}"] = np.nan
+            # 5. Calcolo Medie Geometriche di Resistività per Categorie
+            # Upper (qp1, qp2, qp3)
+            vals_up = [
+                riga_record.get("rho25_qp1", np.nan),
+                riga_record.get("rho25_qp2", np.nan),
+                riga_record.get("rho25_qp3", np.nan),
+            ]
+            vals_up_valid = [v for v in vals_up if pd.notna(v) and v > 0]
+            riga_record["rho25_geom_upper"] = (
+                round(float(np.exp(np.mean(np.log(vals_up_valid)))), 3) if vals_up_valid else np.nan
+            )
+
+            # Lower (qp4, qp5, qp6)
+            vals_low = [
+                riga_record.get("rho25_qp4", np.nan),
+                riga_record.get("rho25_qp5", np.nan),
+                riga_record.get("rho25_qp6", np.nan),
+            ]
+            vals_low_valid = [v for v in vals_low if pd.notna(v) and v > 0]
+            riga_record["rho25_geom_lower"] = (
+                round(float(np.exp(np.mean(np.log(vals_low_valid)))), 3)
+                if vals_low_valid
+                else np.nan
+            )
+
+            # Dipole-dipole (qp7, qp8)
+            vals_dip = [
+                riga_record.get("rho25_qp7", np.nan),
+                riga_record.get("rho25_qp8", np.nan),
+            ]
+            vals_dip_valid = [v for v in vals_dip if pd.notna(v) and v > 0]
+            riga_record["rho25_geom_dipole"] = (
+                round(float(np.exp(np.mean(np.log(vals_dip_valid)))), 3)
+                if vals_dip_valid
+                else np.nan
+            )
+
+            # Wenner (W1, W2, W3, W4)
+            vals_wen = [
+                riga_record.get("rho25_W1", np.nan),
+                riga_record.get("rho25_W2", np.nan),
+                riga_record.get("rho25_W3", np.nan),
+                riga_record.get("rho25_W4", np.nan),
+            ]
+            vals_wen_valid = [v for v in vals_wen if pd.notna(v) and v > 0]
+            riga_record["rho25_geom_wenner"] = (
+                round(float(np.exp(np.mean(np.log(vals_wen_valid)))), 3)
+                if vals_wen_valid
+                else np.nan
+            )
 
             # Controllo Qualità QC globale del timestep (eps medio < 5%)
             qc_pass = (np.mean(errori_reciproci) < 5.0) if errori_reciproci else False

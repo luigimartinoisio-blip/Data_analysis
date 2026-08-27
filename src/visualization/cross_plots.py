@@ -47,7 +47,7 @@ def crea_cross_plot_plotly(
     x_label = LABEL_VARIABILI.get(var_x, var_x)
 
     if var_y_tipo == "rho_25":
-        y_label = LABEL_VARIABILI.get("rho_25", "Calibrated Apparent Resistivity ρ₂₅ [Ω·m]")
+        y_label = LABEL_VARIABILI.get("rho_25", "Calibrated Resistivity ρ₂₅ [Ω·m]")
         for qp in qps:
             col_rho = f"rho25_{qp}"
             col_eps = f"eps_{qp}"
@@ -73,7 +73,7 @@ def crea_cross_plot_plotly(
                 f"{x_label}: {row[var_x]:.2f}<br>"
                 f"ρ₂₅: {row[col_rho]:.2f} Ω·m<br>"
                 f"θ: {row.get('theta_vol_pct', np.nan):.2f}%<br>"
-                f"ψ: {row.get('suzione_media_kpa', np.nan):.2f} kPa<br>"
+                f"ψ_mean: {row.get('suzione_media_kpa', np.nan):.2f} kPa<br>"
                 f"ε_rec: {row.get(col_eps, np.nan):.2f}%"
                 for _, row in df_plot.iterrows()
             ]
@@ -90,6 +90,52 @@ def crea_cross_plot_plotly(
                     hovertext=hover_text,
                 )
             )
+
+    elif var_y_tipo == "rho25_geom_categories":
+        y_label = "Geometric Mean Resistivity ρ₂₅ [Ω·m]"
+        geom_curves = [
+            ("rho25_geom_upper", "Geometric Mean Upper (Ring 1-2)", "black", "circle"),
+            ("rho25_geom_lower", "Geometric Mean Lower (Ring 3-4)", "darkred", "square"),
+            ("rho25_geom_dipole", "Geometric Mean Dipole-dipole", "darkblue", "diamond"),
+            ("rho25_geom_wenner", "Geometric Mean Wenner", "forestgreen", "triangle-up"),
+        ]
+        for col_g, lbl_g, col_c, sym in geom_curves:
+            if col_g in df.columns:
+                df_p = df.dropna(subset=[var_x, col_g])
+                if not df_p.empty:
+                    fig.add_trace(
+                        go.Scatter(
+                            x=df_p[var_x],
+                            y=df_p[col_g],
+                            mode="lines+markers",
+                            name=lbl_g,
+                            marker=dict(size=7.5, color=col_c, symbol=sym),
+                            line=dict(width=2.2, color=col_c),
+                        )
+                    )
+
+    elif var_y_tipo == "suzioni_entrambe":
+        y_label = "Matric Suction ψ [kPa]"
+        suct_curves = [
+            ("suzione_top_estesa_kpa", "Upper Tensiometer (z = 3.75 cm)", "royalblue", "solid"),
+            ("suzione_bottom_estesa_kpa", "Lower Tensiometer (z = 1.25 cm)", "firebrick", "solid"),
+            ("suzione_media_kpa", "Mean Matric Suction", "black", "dash"),
+        ]
+        for col_s, lbl_s, col_c, d_style in suct_curves:
+            if col_s in df.columns:
+                df_s = df.dropna(subset=[var_x, col_s])
+                if not df_s.empty:
+                    fig.add_trace(
+                        go.Scatter(
+                            x=df_s[var_x],
+                            y=df_s[col_s],
+                            mode="lines+markers" if d_style == "solid" else "lines",
+                            name=lbl_s,
+                            marker=dict(size=6.5, color=col_c),
+                            line=dict(width=2.0, color=col_c, dash=d_style),
+                        )
+                    )
+
     else:
         y_label = LABEL_VARIABILI.get(var_y_tipo, var_y_tipo)
         df_plot = df.dropna(subset=[var_x, var_y_tipo])
@@ -98,15 +144,15 @@ def crea_cross_plot_plotly(
                 x=df_plot[var_x],
                 y=df_plot[var_y_tipo],
                 mode="lines+markers",
-                name=f"{y_label} vs {x_label}",
-                marker=dict(size=8, color="darkblue"),
+                name=f"{y_label}",
+                marker=dict(size=7.5, color="darkblue"),
                 line=dict(width=2.2, color="darkblue"),
             )
         )
 
     titolo = titolo_personalizzato or f"Sample {campione} — {y_label} vs {x_label}"
     fig.update_layout(
-        title=dict(text=titolo, x=0.5, font=dict(size=16)),
+        title=dict(text=titolo, x=0.5, font=dict(size=15)),
         xaxis=dict(
             title=x_label,
             type="log" if log_x else "linear",
@@ -130,7 +176,7 @@ def crea_cross_plot_plotly(
             x=0.5,
             bordercolor="lightgrey",
             borderwidth=1,
-            font=dict(size=10),
+            font=dict(size=9.5),
         ),
         margin=dict(l=60, r=40, t=50, b=80),
         hovermode="closest",
@@ -169,17 +215,17 @@ def crea_cross_plot_matplotlib(
         if df_plot.empty:
             continue
 
-        color = PALETTE_COLORI.get(qp, "black")
+        color = PALETTE_COLORI.get(qp, "blue")
         label = ETICHETTE_QP.get(qp, qp)
 
         ax.plot(
             df_plot[var_x],
             df_plot[col_rho],
             marker=MARKER_DEFAULT,
-            markersize=5,
-            linewidth=1.5,
             color=color,
             label=label,
+            linewidth=1.8,
+            markersize=6,
         )
 
     if log_x:
@@ -187,10 +233,10 @@ def crea_cross_plot_matplotlib(
     if log_y:
         ax.set_yscale("log")
 
-    ax.set_xlabel(x_label, fontsize=12, fontweight="bold")
-    ax.set_ylabel(LABEL_VARIABILI.get("rho_25", "ρ₂₅ [Ω·m]"), fontsize=12, fontweight="bold")
-    ax.set_title(f"Sample {campione} — {categoria_o_qp}", fontsize=14, fontweight="bold")
+    ax.set_xlabel(x_label, fontsize=12)
+    ax.set_ylabel("Calibrated Apparent Resistivity ρ₂₅ [Ω·m]", fontsize=12)
+    ax.set_title(f"Sample {campione} — Calibrated Resistivity vs {x_label}", fontsize=14)
     ax.grid(True, linestyle="--", alpha=0.6)
-    ax.legend(loc="best", frameon=True, fontsize=9)
-    plt.tight_layout()
+    ax.legend(bbox_to_anchor=(0.5, -0.2), loc="upper center", ncol=3, frameon=True)
+    fig.tight_layout()
     return fig

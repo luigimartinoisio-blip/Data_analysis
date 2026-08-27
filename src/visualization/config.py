@@ -47,12 +47,18 @@ LABEL_VARIABILI: Dict[str, str] = {
     "ore_trascorse_da_t0": "Elapsed Time [hours]",
     "theta_vol_pct": "Volumetric Water Content θ [Vol%]",
     "contenuto_acqua_grav_pct": "Gravimetric Water Content w [%]",
-    "suzione_media_kpa": "Matric Suction ψ [kPa]",
+    "suzione_media_kpa": "Matric Suction Mean ψ_mean [kPa]",
+    "suzione_top_estesa_kpa": "Matric Suction Upper ψ_up [kPa]",
+    "suzione_bottom_estesa_kpa": "Matric Suction Lower ψ_low [kPa]",
     "log10_suzione_kpa": "log₁₀(Suction [kPa])",
     "peso_netto_g": "Net Weight [g]",
     "temperatura_C": "Temperature [°C]",
     "grado_saturazione_Sr": "Degree of Saturation Sr [-]",
-    "rho_25": "Calibrated Apparent Resistivity ρ₂₅ [Ω·m]",
+    "rho_25": "Calibrated Resistivity ρ₂₅ [Ω·m]",
+    "rho25_geom_upper": "Geometric Mean Upper ρ₂₅,up [Ω·m]",
+    "rho25_geom_lower": "Geometric Mean Lower ρ₂₅,low [Ω·m]",
+    "rho25_geom_dipole": "Geometric Mean Dipole-dipole ρ₂₅,dip [Ω·m]",
+    "rho25_geom_wenner": "Geometric Mean Wenner ρ₂₅,wen [Ω·m]",
 }
 
 MARKER_DEFAULT: str = "o"

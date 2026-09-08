@@ -64,44 +64,36 @@ $$D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$$
 
 ---
 
-## 5. RISTRUTTURAZIONE FASE 06: IPOTESI DI LAVORO E SVILUPPO VERSO LA CAMPAGNA `02CARL`
+## 5. RISTRUTTURAZIONE FASE 06: IPOTESI DI LAVORO QUALITATIVA E SVILUPPO VERSO LA CAMPAGNA `02CARL`
 
-### 5.1 Definizione Integrale della GAP Area
-La discrepanza energetica complessiva tra desaturazione idraulica e risposta geoelettrica è calcolata come:
-
-$$\Delta_{\mathrm{GAP}} = \int_{\log_{10} h_{\min}}^{\log_{10} h_{\max}} \left[ S_e(\log_{10} h) - \sigma_{\mathrm{norm}}(\log_{10} h) \right] d(\log_{10} h)$$
-
-Integrando su $h \in [10^{-2}, 10^3]\ \mathrm{kPa}$ ($5$ decadi di suzione):
-
-| Campione | Tessitura USDA | Clay [%] | Fillosilicati Tot. [%] | Smectite in I/S [%] | $D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$ | $\mathbf{\Delta_{\mathrm{GAP}}\ [decadi]}$ | Diagnostica di Regime |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| **`Sand_R`** | Sand | 0.0 | 0.0 | 0% | 2.09 | **0.048** | *(a) Minimal GAP (Synchronous)* |
-| **`ML7`** | Sandy Loam | 18.2 | 24.0 | 69% | 9.97 | **0.630** | *(b) Reduced GAP (Sand Mitigation)* |
-| **`ML4`** | Loam | 24.7 | 26.5 | 70% | 12.33 | **0.492** | *Intermediate Loam GAP* |
-| **`ML8`** | Silt Loam | 22.8 | 26.0 | 70% | 21.75 | **0.735** | *Active Silt GAP* |
-| **`ML1`** | Silt Loam | 26.2 | 34.5 | 68% | 26.63 | **0.776** | *High Tortuosity GAP* |
-| **`ML10`** | Silty Clay Loam | 33.0 | 65.5 | 75% | 26.48 | **1.018** | *(d) Buffered GAP (Smectite EDL)* |
-| **`ML9`** | Silt Loam | 26.2 | 31.0 | 72% | 36.14 | **1.234** | *(c) Maximum GAP (Silt Pinch-off)* |
+### 5.1 Il Significato Concettuale della GAP Area
+La discrepanza visiva tra la curva di desaturazione idraulica $S_e(h)$ e la risposta geoelettrica accoppiata $\sigma_{\mathrm{norm}}(h)$ è denominata **`GAP area`**.
+* **Nessun calcolo numerico chiuso**: In questa campagna, l'analisi quantitativa si arresta al Decoupling Index $D_{EH}$ (Fase 05). La $\text{GAP area}$ non viene integrata numericamente né fittata, ma è assunta come **osservazione qualitativa/concettuale**.
+* **I 4 Regimi Qualitativi di Riferimento**:
+  1. *(a) Clean Sand (`Sand_R`)*: Transizione sincrona a scalino con GAP minimo/nullo ($n_A = 1.84$).
+  2. *(b) Sandy Loam (`ML7`)*: GAP ridotto grazie allo scheletro sabbioso che mitiga la tortuosità ($n_A = 1.96$).
+  3. *(c) Silt Loam (`ML9`)*: GAP massimo per strozzamento geometrico dei colli porosi limosi in assenza di EDL continuo ($n_A = 4.38$).
+  4. *(d) Silty Clay Loam (`ML10`)*: GAP compresso dall'azione tampone dell'EDL smectitico ($n_A = 3.63$).
 
 ---
 
 ### 5.2 L'Ipotesi di Lavoro Fondante: Il "Buffering" delle Argille Espandibili
 * **$D_{EH}$** esprime come i parametri esponenti elettro-idraulici accoppiati scalano rispetto alla **sola granulometria** (scheletro sabbioso vs matrice fine).
-* La **$\text{GAP area}$** è invece modulata dalla **presenza di minerali argillosi espandibili (interstratificati Illite/Smectite)** che forniscono conduzione superficiale lungo il Doppio Strato Elettrico (EDL buffering), sostenendo la conducibilità elettrica e impedendole di precipitare bruscamente.
-* **Dimostrazione (ML10 vs ML9)**: ML10, pur avendo più argilla granulometrica ($33.0\%$) e più del doppio di fillosilicati ($65.5\%$) rispetto a ML9 ($26.2\%$ argilla, $31.0\%$ fillosilicati), presenta una $\text{GAP area}$ sensibilmente **più compressa ($\Delta_{\mathrm{GAP}} = 1.018$ vs $1.234\ \text{decadi}$)** grazie all'azione tampone dell'EDL smectitico.
+* La **$\text{GAP area}$** è invece modulata qualitativamente dalla **presenza di minerali argillosi espandibili (interstratificati Illite/Smectite)** che forniscono conduzione superficiale lungo il Doppio Strato Elettrico (EDL buffering), sostenendo la conducibilità elettrica e impedendole di precipitare bruscamente.
+* **Dimostrazione Qualitativa (ML10 vs ML9)**: ML10, pur avendo più argilla granulometrica ($33.0\%$) e più del doppio di fillosilicati ($65.5\%$) rispetto a ML9 ($26.2\%$ argilla, $31.0\%$ fillosilicati), presenta una $\text{GAP area}$ visivamente **più compressa** grazie all'azione tampone dell'EDL smectitico.
 
 ---
 
 ### 5.3 Il Layout Master della Fase 06
-Pannello composito master:
-* **Centro**: Diagramma ternario USDA con i 4 campioni chiave (`Sand_R`, `ML7`, `ML9`, `ML10`).
+Pannello composito master (`fase06.png`):
+* **Centro**: Diagramma ternario USDA con i 4 campioni chiave (`Sand_R`, `ML7`, `ML9`, `ML10`) e profilo topografico sottostante.
 * **4 Riquadri Angolari**: I 4 grafici normalizzati $[0, 1]$ con campitura `GAP area`:
-  * (a) `Clean Sand (Sand_R)` | $\Delta = 0.05$ | *Minimal GAP*;
-  * (b) `Sandy Loam (ML7)` | $\Delta = 0.63$ | *Reduced GAP (Sand Mitigation)*;
-  * (c) `Silt Loam (ML9)` | $\Delta = 1.23$ | *Maximum GAP (Silt Effect)*;
-  * (d) `Silty Clay Loam (ML10)` | $\Delta = 1.02$ | *Buffered GAP (EDL Effect)*.
+  * (a) `Clean Sand (Sand_R)` | *Minimal GAP*;
+  * (b) `Sandy Loam (ML7)` | *Reduced GAP (Sand Mitigation)*;
+  * (c) `Silt Loam (ML9)` | *Maximum GAP (Silt Effect)*;
+  * (d) `Silty Clay Loam (ML10)` | *Buffered GAP (EDL Effect)*.
 
 ---
 
 ### 5.4 Sviluppo Futuro verso la Campagna `02Carl`
-La quantificazione esplicita di questa seconda tematica (conduzione di superficie, Waxman-Smits / Revil e blocco sperimentale di $\mathrm{EC}_{\mathrm{res}}$ post-cavitazione) sarà l'oggetto fondante del successivo articolo scientifico basato sulla campagna `Hyprop_geotom_02Carl`.
+La modellazione quantitativa della conduzione di superficie (Waxman-Smits / Revil) e il blocco sperimentale di $\mathrm{EC}_{\mathrm{res}}$ post-cavitazione saranno l'oggetto fondante del successivo articolo scientifico basato sulla campagna `Hyprop_geotom_02Carl`.

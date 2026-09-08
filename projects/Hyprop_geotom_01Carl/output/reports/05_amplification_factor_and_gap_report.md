@@ -83,4 +83,4 @@ $$D_{EH} = 2.05 \cdot 10^{0.0124 \cdot (\% \text{Fines})} \quad (r = +0.956,\ p 
 
 1. **$D_{EH}$ is the fundamental textural metric**: It scales monotonically and predictably across 2 orders of magnitude ($2.09 \to 36.14$) solely as a function of fine fraction.
 2. **Archie's limit is recovered**: At $0\%$ fines, $D_{EH} = 2.05$, validating the theoretical basis of the model.
-3. **Preparation for Phase 06**: While $D_{EH}$ captures the textural/geometric skeleton scaling, the mineralogical composition (especially expandable smectite clays) governs the integral energy divergence ($\text{GAP area}$), as investigated in Phase 06.
+3. **Preparation for Phase 06**: While $D_{EH}$ captures the textural/geometric skeleton scaling, the mineralogical composition (especially expandable smectite clays) qualitatively modulates the visual $\text{GAP area}$, as introduced in Phase 06.

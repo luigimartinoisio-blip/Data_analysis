@@ -31,12 +31,13 @@ Il presente Vademecum definisce la metodologia analitica, le equazioni matematic
 ### 3.2 Fase 02 — Inversione Accoppiata van Genuchten – Archie
 * Modello idraulico: $S_e(h) = \left[ 1 + (\alpha_{\mathrm{VG}} h)^{n_{\mathrm{VG}}} \right]^{-m_{\mathrm{VG}}}$, con $m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$.
 * Modello geoelettrico accoppiato: $\sigma_{\mathrm{norm}}(h) = S_e(h)^{n_A} = \left[ 1 + (\alpha_{\mathrm{VG}} h)^{n_{\mathrm{VG}}} \right]^{-m_{\mathrm{VG}} n_A}$.
+* **Calcolo di $n_A$ Rappresentativo di Matrice**: L'esponente $n_A$ viene calcolato fittando la media geometrica dei quadripoli validi della parte inferiore del cilindro (**anelli L3 a $z=2\text{ cm}$ ed L4 a $z=1\text{ cm}$**, ovvero `geom_lower`), garantendo la co-localizzazione con il tensiometro inferiore ($z=1.25\text{ cm}$) ed eliminando i disturbi di disidratazione corticale superficiale (L1–L2).
 
 ### 3.3 Fase 03 — Screening di Validità Epistemologica
 * Identificazione dei regimi canonici, gradienti verticali ed esclusione formale dei campioni con collasso fisico da EDL (es. `ML6`, $n_A = 1.001$, `FAILED BOUNDS`).
 
 ### 3.4 Fase 04 — Total Decluttering e Rappresentazione Continua
-* Grafici master puramente teorici nello spazio normalizzato $[0, 1]$ con evidenziazione della `GAP area`.
+* Grafici master puramente teorici nello spazio normalizzato $[0, 1]$ con evidenziazione della `GAP area` basati sulle traiettorie del benchmark inferiore ($n_A$).
 
 ---
 

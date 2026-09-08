@@ -22,7 +22,7 @@ Mentre Boyd et al. (2024) hanno evidenziato le problematiche aperte e le limitaz
 1. **Chiusura Quantitativa in Fase 05 — Indice di Disaccoppiamento Elettro-Idraulico ($D_{EH}$)**:
    - L'analisi numerica/quantitativa di regressione e modellazione si conclude formalmente e definitivamente in **Fase 05** (documentata in [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md)) mediante il parametro unificato:
      $$D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$$
-     dove $n_A$ è l'esponente di saturazione di Archie calibrato in Fase 02/03 e $m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$ è l'indice di distribuzione dei pori di van Genuchten.
+     dove $n_A$ è l'esponente di saturazione di Archie calibrato in Fase 02/03 fittando la media geometrica dei quadripoli validi della parte inferiore del cilindro (**anelli L3 a $z=2\text{ cm}$ ed L4 a $z=1\text{ cm}$**, ovvero `geom_lower`), co-localizzata con il tensiometro inferiore ($z=1.25\text{ cm}$) per eliminare i gradienti di essiccamento corticale superficiale, e $m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$ è l'indice di distribuzione dei pori di van Genuchten.
    - **Legge di Scala Universale Tessiturale**:
      $$\log_{10}(D_{EH}) = 0.3120 + 0.0124 \cdot (\% \text{Fines}) \implies D_{EH} = 2.05 \cdot 10^{0.0124 \cdot (\% \text{Fines})} \quad (r = +0.956,\ p = 0.001)$$
    - **Limite Asintotico Canonico a 0% Fini**: per sabbia pulita ($m_{\mathrm{VG}} \to 1.0$), $D_{EH} \to n_A = 2.05$, recuperando esattamente il valore teorico canonico di Archie per sfere monodisperse non coesive.

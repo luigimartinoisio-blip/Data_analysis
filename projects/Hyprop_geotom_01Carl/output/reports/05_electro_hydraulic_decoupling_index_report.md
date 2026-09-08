@@ -10,7 +10,7 @@ In strict alignment with user instructions and validated analytical workflows:
    The intermediate use of an isolated geometric factor $\mathcal{K}$ is formally eliminated. The coupling metric is directly defined as the **Electro-Hydraulic Decoupling Index**:
    $$D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$$
    where:
-   - $n_A$ is the Archie saturation exponent derived from coupled hydro-geophysical inversion in Phase 02/03;
+   - $n_A$ is the Archie saturation exponent derived from coupled hydro-geophysical inversion in Phase 02/03, fitted on the geometric mean of valid quadripoles in the undisturbed lower portion of the core (**Layers L3 at $z=2\text{ cm}$ and L4 at $z=1\text{ cm}$**, i.e. `geom_lower`), co-located with the lower tensiometer ($z=1.25\text{ cm}$);
    - $m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$ is the van Genuchten pore-size distribution index.
 2. **Physical Meaning**:
    $D_{EH}$ normalizes the sensitivity of electrical disconnection ($n_A$) against the intrinsic width of the capillary pore spectrum ($m_{\mathrm{VG}}$), quantifying the true extent of electro-hydraulic decoupling during unsaturated desaturation.

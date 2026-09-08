@@ -10,118 +10,103 @@ Il tuo compito è redigere l'articolo scientifico completo basato sui dati speri
 L'articolo rappresenta la **naturale continuazione, approfondimento e risposta sperimentale al lavoro cardine di Boyd et al. (2024)**:
 > **Boyd, J., Chambers, J., Wilkinson, P., Peppa, M., Watlet, A., Kirkham, M., ... & Binley, A. (2024)**. *Practical considerations for using petrophysics and geoelectrical methods on clay-rich landslides*. 
 
-Mentre Boyd et al. (2024) hanno evidenziato le problematiche aperte e le limitazioni pratiche nell'applicazione della petrofisica geoelettrica a pendii argillosi instabili (conduzione superficiale, variabilità dell'esponente di Archie $n$, incertezza nella stima dell'umidità e della suzione), il presente studio **fornisce la soluzione metodologica e petrofisica di laboratorio**:
+Mentre Boyd et al. (2024) hanno evidenziato le problematiche aperte e le limitazioni pratiche nell'applicazione della petrofisica geoelettrica a pendii argillosi instabili (conduzione superficiale, deviazione dall'esponente canonico di Archie $n=2$, incertezze nella conversione ERT $\to$ umidità/suzione), il presente studio **fornisce la risposta metodologica e petrofisica di laboratorio**:
 1. Accoppiamento continuo evaporazione-geoelettrica su carote indisturbate di terreni eterogenei da frana (sito di Carlazzo / Valle di Menaggio).
-2. Formalizzazione dell'**Indice di Disaccoppiamento Elettro-Idraulico ($D_{EH} = n_A / m_{\mathrm{VG}}$)**, che scala universalmente con la frazione fine.
-3. Spiegazione fisica dei meccanismi concorrenti di strozzamento geometrico dei pori limosi e dell'azione tampone (EDL buffering) dei fillosilicati espandibili (smectite).
+2. Introduzione e validazione dell'**Indice di Disaccoppiamento Elettro-Idraulico ($D_{EH} = n_A / m_{\mathrm{VG}}$)**, che scala universalmente con la frazione fine.
+3. Spiegazione dei meccanismi concorrenti di strozzamento geometrico dei pori limosi e dell'azione tampone (EDL buffering) dei fillosilicati espandibili (smectite).
 
 > [!IMPORTANT]
 > ### **FONTE UNICA E VINCOLANTE DI VERITÀ METODOLOGICA**
-> **TUTTO ció che riguarda la metodologia, le equazioni matematiche, i protocolli sperimentali, i criteri di screening e le scelte modellistiche DEVE essere rigorosamente ed esclusivamente ricavato dai Report Metodologici specialistici (Fasi 00 – 06) e dal Vademecum metodologico del progetto situati nella cartella `projects/Hyprop_geotom_01Carl/output/reports/`**.
-> L'agente di scrittura non deve inventare assunzioni né utilizzare formulazioni esterne discordanti rispetto a quanto validato e documentato in tali report.
+> **TUTTI i dettagli metodologici, i protocolli sperimentali, le equazioni analitiche, i modelli idraulici ed elettrici, le procedure di inversione e i criteri di calibrazione DEVONO essere estratti esclusivamente dai Report Metodologici specialistici (Fasi 00 – 06) e dal Vademecum metodologico situati nella cartella `projects/Hyprop_geotom_01Carl/output/reports/`**.
+> L'agente di scrittura deve fare costante riferimento a tali documenti come fonte primaria e non deve introdurre assunzioni o formulazioni esterne non allineate.
 
 ---
 
 ## 2. REGOLE EPISTEMOLOGICHE E FRONTIERE METODOLOGICHE CRITICHE
 
-1. **Chiusura Quantitativa in Fase 05 — Indice di Disaccoppiamento Elettro-Idraulico ($D_{EH}$)**:
-   - L'analisi numerica/quantitativa di regressione e modellazione si conclude formalmente e definitivamente in **Fase 05** (documentata in [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md)) mediante il parametro unificato:
-     $$D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$$
-     dove $n_A$ è l'esponente di saturazione di Archie calibrato in Fase 02/03 fittando la media geometrica dei quadripoli validi della parte inferiore del cilindro (**anelli L3 a $z=2\text{ cm}$ ed L4 a $z=1\text{ cm}$**, ovvero `geom_lower`), co-localizzata con il tensiometro inferiore ($z=1.25\text{ cm}$) per eliminare i gradienti di essiccamento corticale superficiale, e $m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$ è l'indice di distribuzione dei pori di van Genuchten.
-   - **Legge di Scala Universale Tessiturale**:
-     $$\log_{10}(D_{EH}) = 0.3120 + 0.0124 \cdot (\% \text{Fines}) \implies D_{EH} = 2.05 \cdot 10^{0.0124 \cdot (\% \text{Fines})} \quad (r = +0.956,\ p = 0.001)$$
-   - **Limite Asintotico Canonico a 0% Fini**: per sabbia pulita ($m_{\mathrm{VG}} \to 1.0$), $D_{EH} \to n_A = 2.05$, recuperando esattamente il valore teorico canonico di Archie per sfere monodisperse non coesive.
+1. **Chiusura Quantitativa in Fase 05 — Decoupling Index ($D_{EH}$)**:
+   - La modellazione e regressione quantitativa si conclude in **Fase 05** (cfr. [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md)) con l'Indice di Disaccoppiamento $D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$ e la legge di scala universale vs $\%$ Fini ($r = +0.956,\ p = 0.001$).
+   - Limite asintotico a $0\%$ Fini: recupero canonico di Archie ($D_{EH} \to 2.05$).
 
-2. **Fase 06 e GAP Area: Trattazione Esclusivamente QUALITATIVA (Nessun Calcolo Numerico)**:
-   - Documentata in [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md).
+2. **Fase 06 e GAP Area: Trattazione Esclusivamente QUALITATIVA**:
+   - (cfr. [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md)).
    - **NON calcolare né riportare alcun valore numerico/integrale dell'area GAP ($\Delta_{\mathrm{GAP}}$)**.
-   - L'area compresa tra la curva di desaturazione idraulica normalizzata $S_e(h)$ e la curva di conducibilità elettrica normalizzata $\sigma_{\mathrm{norm}}(h)$ (denominata visual `GAP area`) deve essere discussa **esclusivamente come osservazione qualitativa** e come **ipotesi di lavoro fondamentale**.
-   - **Ipotesi del Buffering del Doppio Strato Elettrico (EDL Buffering)**: spiegare qualitativamente che la discrepanza tensio-elettrica è governata non solo dalla tessitura, ma dalla presenza di minerali argillosi espandibili (interstratificati Illite/Smectite) che forniscono percorsi di conduzione superficiale, sostenendo la conducibilità elettrica e comprimendo visivamente il GAP.
-   - **Paradosso Qualitativo ML10 vs ML9**: ML10 (argilla limosa, $33\%$ argilla, $65.5\%$ fillosilicati con $75\%$ smectite in I/S) presenta un GAP visivo **più compresso** rispetto a ML9 (limo sabbioso, $26.2\%$ argilla, $31\%$ fillosilicati), dimostrando l'azione tampone dell'EDL smectitico rispetto allo strozzamento geometrico dei pori limosi.
-   - **Gancio Concettuale**: la quantificazione numerica e l'inversione esplicita di conducibilità superficiale ($\sigma_s$, CEC) costituiscono il trampolino di lancio e l'obiettivo prioritario della campagna successiva (`Hyprop_geotom_02Carl`).
+   - La visual `GAP area` deve essere discussa esclusivamente come **osservazione qualitativa e ipotesi di lavoro** sull'azione tampone del Doppio Strato Elettrico (EDL Buffering) dei minerali argillosi espandibili (supportata dal paradosso ML10 vs ML9).
+   - Funge da gancio concettuale verso la successiva campagna (`Hyprop_geotom_02Carl`).
 
 3. **Citazione Formale della Fase 00 (Cella Multi-Elettrodo e Fattori Geometrici)**:
-   - La cella multi-elettrodo per l'evaporazione continua accoppiata, la calibrazione numerica dei fattori geometrici ($K_{\mathrm{geom}}$) e la validazione sperimentale sull'anello basale sono documentate nel companion paper già sottomesso:
+   - La cella multi-elettrodo, la calibrazione numerica dei fattori geometrici ($K_{\mathrm{geom}}$) e la validazione sperimentale sono documentate nel companion paper già sottomesso:
      > *Martino, L., et al. (under review). Design, Geometric Factor Calibration, and Experimental Validation of a Continuous Multi-Electrode Evaporation Cell for Coupled Hydro-Geophysical Characterization of Unsaturated Soils. Journal of Hydrology / Vadose Zone Journal.*
 
-4. **Pulizia del Dataset e Assenza di Tracce di Esclusione**:
-   - I campioni validati del dataset sono 7: `Sand_R` (sabbia pulita di riferimento), `ML7` (franco-sabbioso), `ML4` (franco), `ML8` (franco-limoso), `ML1` (franco-limoso), `ML10` (franco-argillo-limoso), `ML9` (franco-limoso).
+4. **Composizione del Dataset e Pulizia**:
+   - Dataset costituito dai 7 campioni validati: `Sand_R`, `ML7`, `ML4`, `ML8`, `ML1`, `ML10`, `ML9`.
    - Nessuna menzione o marcatore di campioni scartati nei grafici o nel corpo principale.
 
 ---
 
-## 3. STRUTTURA DETTAGLIATA DELL'ARTICOLO (MODELLO BOYD ET AL., 2024)
+## 3. STRUTTURA DEL PAPER (SECONDO IL MODELLO BOYD ET AL., 2024)
 
-### **Title Proposal**:
+### **Titolo Proposto**:
 *Coupled Electro-Hydraulic Dynamics in Heterogeneous Landslide Soils: Constraining Unsaturated Desaturation via a Textural Decoupling Index and Smectite Surface Buffering*
 
 ### **1. Introduction**
 - Ruolo dei processi idrologici insaturi e della dinamica tensio-elettrica nel monitoraggio dei pendii in frana.
-- Lo stato dell'arte petrofisico per le frane argillose: richiamo al framework e alle problematiche aperte evidenziate da **Boyd et al. (2024)** (*"Practical considerations for using petrophysics and geoelectrical methods on clay-rich landslides"*).
-- I limiti dell'assunzione canonica di Archie ($n=2$, assenza di conduzione di superficie) e la variabilità della risposta geoelettrica durante il prosciugamento in suoli a granulometria mista.
-- L'approccio proposto: caratterizzazione tensio-elettrica continua di laboratorio su carote indisturbate per derivare un indice accoppiato di disaccoppiamento elettro-idraulico.
+- Stato dell'arte petrofisico per le frane argillose: inquadramento delle problematiche aperte da **Boyd et al. (2024)** (*"Practical considerations for using petrophysics and geoelectrical methods on clay-rich landslides"*).
+- Limiti dell'assunzione canonica $n=2$ e variabilità della risposta elettrica in terreni eterogenei naturali.
+- Obiettivi dello studio: caratterizzazione accoppiata continua di laboratorio per definire un indice unificato di disaccoppiamento.
 
 ### **2. Materials and Geological Setting**
-- Il sito di frana di Carlazzo (Valle di Menaggio, Prealpi Lombarde): inquadramento geologico, geomorfologico e genesi dei corpi di frana.
-- Protocollo di campionamento volumetrico indisturbato (serie ML).
-- Proprietà granulometriche (setacciatura, sedimentometria) e classificazione USDA (dalla sabbia pura a franco-argillo-limoso).
-- Mineralogia XRD quantitativa delle polveri e della frazione argillosa: frazione clastica inerte (quarzo, feldspati, carbonati) vs minerali argillosi e interstratificati Illite/Smectite ad alta superficie specifica.
+- Il sito di frana di Carlazzo (Valle di Menaggio, Prealpi Lombarde): contesto geologico e deposizionale.
+- Campionamento indisturbato (serie ML).
+- Proprietà granulometriche (classificazione USDA) e mineralogia XRD quantitativa (fillosilicati e interstratificati I/S).
 
 ### **3. Experimental and Methodological Framework**
+*(Tutti i dettagli operativi, le equazioni e i vincoli di calibrazione vanno estratti dai report specialistici di riferimento)*:
 - **3.1 Apparatus for Coupled Evaporation & Geoelectrical Monitoring**:
-  - Principio del metodo evaporativo continuo (Wind/Schindler via HYPROP) integrato con array geoelettrico a 4 elettrodi miniaturizzati (Geotom/syscal).
-  - Rimando a *Martino et al. (under review)* per la validazione metrologica, la correzione della temperatura (standard $20^\circ\text{C}$ via equazione di Hayashi 2004) e il fattore geometrico d'anello $K_{\mathrm{geom}}$.
+  - Metodo evaporativo continuo accoppiato ad array geoelettrico (rimando a *Martino et al., under review* e a [`00_benchmark_lower_layers_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/00_benchmark_lower_layers_report.md)).
 - **3.2 Hydraulic Model Formulation**:
-  - Formulazione classica di van Genuchten (1980) con vincolo di Mualem ($m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$).
-  - Saturazione efficace $S_e(h) = [1 + (\alpha h)^{n_{\mathrm{VG}}}]^{-m_{\mathrm{VG}}}$.
-- **3.3 Geoelectrical Formulation and Archie Inversion**:
-  - Seconda legge di Archie normalizzata: $\sigma_{\mathrm{norm}} = \frac{\sigma(h)}{\sigma_0} = S_e^{n_A}$.
-  - Inversione congiunta e calcolo dell'esponente di saturazione apparente $n_A$ sulla porzione inferiore (`geom_lower`, anelli L3 ed L4).
+  - Modello di van Genuchten (1980) e ritenzione idraulica (cfr. [`02_coupled_van_genuchten_archie_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/02_coupled_van_genuchten_archie_report.md)).
+- **3.3 Geoelectrical Formulation and Inversion**:
+  - Modello geoelettrico accoppiato e inversione dell'esponente $n_A$ sulla porzione inferiore (`geom_lower`, anelli L3 ed L4) (cfr. [`02_coupled_van_genuchten_archie_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/02_coupled_van_genuchten_archie_report.md)).
 - **3.4 The Electro-Hydraulic Decoupling Index ($D_{EH}$)**:
-  - Definizione formale di $D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$.
-  - Significato fisico: rapporto tra la sensibilità alla disconnessione elettrica ($n_A$) e l'ampiezza dello spettro poroso idraulico ($m_{\mathrm{VG}}$).
+  - Formulazione e razionale fisico del Decoupling Index $D_{EH} = n_A / m_{\mathrm{VG}}$ (cfr. [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md)).
 
 ### **4. Results**
 - **4.1 Coupled Hydro-Geophysical Evaporation Trajectories**:
-  - Andamento sincronizzato di tensione matriciale $h(t)$, contenuto d'acqua $\theta(t)$ e conducibilità elettrica apparente $\sigma(t)$.
+  - Traiettorie sincrone di suzione $h(t)$, umidità $\theta(t)$ e conducibilità $\sigma(t)$.
 - **4.2 Calibrated Parameters across Soil Textures**:
-  - Presentazione dei parametri $(\alpha, n_{\mathrm{VG}}, m_{\mathrm{VG}}, n_A, D_{EH})$ lungo il gradiente tessiturale.
+  - Parametri idro-geofisici calibrati $(\alpha, n_{\mathrm{VG}}, m_{\mathrm{VG}}, n_A, D_{EH})$ lungo il gradiente tessiturale.
 - **4.3 Scaling Behavior of the Decoupling Index ($D_{EH}$)**:
-  - *Bivariate semi-logarithmic regressions* vs Sand ($r = -0.956$), Silt ($r = +0.937$), Clay ($r = +0.932$).
-  - *Unified Universal Law* vs Total Fines ($\% \text{Fines} = \% \text{Silt} + \% \text{Clay}$):
-    $$\log_{10}(D_{EH}) = 0.3120 + 0.0124 \cdot (\% \text{Fines}) \quad (r = +0.956,\ p = 0.001)$$
-  - Recupero del benchmark teorico a $0\%$ Fini: $D_{EH} \to 2.05 \approx n_{\mathrm{Archie, canonical}}$.
+  - Regressioni semi-logaritmiche con le singole frazioni e legge di scala universale vs $\%$ Fini (cfr. [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md)).
 
 ### **5. Discussion**
 - **5.1 Addressing Practical Challenges in Clay-Rich Landslide Petrophysics**:
-  - Come i risultati di questo studio rispondono direttamente alle raccomandazioni pratiche di **Boyd et al. (2024)**: quantificare la deviazione da $n=2$ attraverso la matrice fine del terreno.
-  - Meccanismo del "sand mitigation": lo scheletro sabbioso stabilizza i percorsi di conduzione.
-  - Meccanismo del "silt throat bottleneck": i pori limosi causano una repentina perdita di connettività idrica/elettrica prima dello svuotamento dei pori maggiori.
+  - Risposta sperimentale e quantitativa alle questioni sollevate da **Boyd et al. (2024)**.
+  - Meccanismi fisici: mitigazione da scheletro sabbioso vs strozzamento dei colli porosi limosi.
 - **5.2 The Conceptual GAP Space: Qualitative Smectite EDL Buffering**:
-  - Analisi visiva della divergenza nello spazio normalizzato $[0, 1]$ tra $S_e(h)$ e $\sigma_{\mathrm{norm}}(h)$ nei 4 regimi diagnostici.
-  - Risoluzione del paradosso ML10 vs ML9: l'effetto tampone del doppio strato elettrico (EDL) negli interstratificati Illite/Smectite.
+  - Analisi qualitativa dello spazio GAP e dei 4 regimi diagnostici.
+  - Paradosso ML10 vs ML9 ed evidenza qualitativa dell'azione tampone dell'EDL smectitico (cfr. [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md)).
 - **5.3 Implications for Slope-Scale Hydrogeophysical Monitoring**:
-  - Conseguenze pratiche per la conversione di tomografie di resistività (ERT) in mappe di saturazione e suzione nei versanti instabili.
+  - Implicazioni per la calibrazione e conversione quantitativa delle tomografie di resistività (ERT) in situ.
 - **5.4 Limitations and Future Outlook towards `02Carl`**:
-  - Limite di cavitazione dei tensiometri ($h \approx 1000 - 1500\ \text{kPa}$) e necessità di misure di resistività terminale residua $\sigma_{\mathrm{res}}$.
-  - Prospettive per la campagna `02Carl`: inversione esplicita di $\sigma_s$ (modelli Waxman-Smits e Revil-Glover) e quantificazione del buffering mineralogico.
+  - Limite di cavitazione dei tensiometri e prospettive di modellazione esplicita della conducibilità superficiale per `02Carl`.
 
 ### **6. Conclusions**
-- Sintesi dei contributi chiave: formalizzazione del Decoupling Index $D_{EH}$, validazione della legge universale con i fini, e dimostrazione del ruolo qualitativo dei fillosilicati espandibili.
+- Sintesi dei risultati principali.
 
 ---
 
-## 4. REPORT SPECIALISTICI E DOCUMENTI METODOLOGICI OBBLIGATORI (CARTELLA `output/reports/`)
+## 4. REPORT METODOLOGICI DA CONSULTARE (CARTELLA `output/reports/`)
 
-L'agente di scrittura **DEVE** consultare i report metodologici della pipeline come fonti primarie per estrarre la metodologia e i risultati:
-0. [`vademecum_metodologico_01Carl.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/vademecum_metodologico_01Carl.md): **Quadro metodologico unificato**, metrologia sperimentale e regole di calibrazione.
-1. [`00_benchmark_lower_layers_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/00_benchmark_lower_layers_report.md): Validazione preliminare della porzione inferiore (L3 ed L4, `geom_lower`) e calibrazione geometrica.
+L'agente di scrittura deve consultare i seguenti documenti specialistici per estrarre la metodologia e i risultati:
+0. [`vademecum_metodologico_01Carl.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/vademecum_metodologico_01Carl.md): Quadro metodologico unificato e metrologia.
+1. [`00_benchmark_lower_layers_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/00_benchmark_lower_layers_report.md): Validazione della porzione inferiore (L3 ed L4, `geom_lower`).
 2. [`01_boyd_2024_empirical_model_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/01_boyd_2024_empirical_model_report.md): Applicazione del modello empirico di Boyd et al. (2024).
-3. [`02_coupled_van_genuchten_archie_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/02_coupled_van_genuchten_archie_report.md): Inversione congiunta van Genuchten–Archie e stima di $n_A, m_{\mathrm{VG}}$ su `geom_lower`.
-4. [`03_normalized_comparison_and_plateau_screening_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/03_normalized_comparison_and_plateau_screening_report.md): Screening dell'anisotropia, indice di ritardo $\Lambda_{\mathrm{EC}}$ e confronto normalizzato.
-5. [`04_master_panels_clean_trajectories_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/04_master_panels_clean_trajectories_report.md): Sintesi grafica delle traiettorie pulite normalizzate $[0, 1]$.
-6. [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md): **Report chiave di chiusura quantitativa**: formulazione di $D_{EH}$, scaling semi-logaritmico vs frazioni granulometriche e legge universale vs % Fini.
-7. [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md): **Ipotesi di lavoro qualitativa**: GAP visivo, paradosso ML10 vs ML9, EDL buffering e blueprint per `02Carl`.
+3. [`02_coupled_van_genuchten_archie_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/02_coupled_van_genuchten_archie_report.md): Inversione congiunta van Genuchten–Archie per la stima di $n_A$ su `geom_lower`.
+4. [`03_normalized_comparison_and_plateau_screening_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/03_normalized_comparison_and_plateau_screening_report.md): Screening dell'anisotropia e indice $\Lambda_{\mathrm{EC}}$.
+5. [`04_master_panels_clean_trajectories_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/04_master_panels_clean_trajectories_report.md): Traiettorie normalizzate $[0, 1]$.
+6. [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md): Decoupling Index $D_{EH}$ e scaling universale vs $\%$ Fini.
+7. [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md): Ipotesi qualitativa EDL buffering e prospettive `02Carl`.
 
 ---
 

@@ -14,7 +14,7 @@ L'articolo rappresenta la **naturale continuazione ed espansione sperimentale de
 ## 2. REGOLE EPISTEMOLOGICHE E FRONTIERE METODOLOGICHE CRITICHE
 
 1. **Chiusura Quantitativa in Fase 05 — Indice di Disaccoppiamento Elettro-Idraulico ($D_{EH}$)**:
-   - L'analisi numerica/quantitativa di regressione e modellazione si conclude formalmente e definitivamente in **Fase 05** mediante il parametro unificato:
+   - L'analisi numerica/quantitativa di regressione e modellazione si conclude formalmente e definitivamente in **Fase 05** (documentata in [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md)) mediante il parametro unificato:
      $$D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$$
      dove $n_A$ è l'esponente di saturazione di Archie calibrato in Fase 02/03 e $m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$ è l'indice di distribuzione dei pori di van Genuchten.
    - **Legge di Scala Universale Tessiturale**:
@@ -22,6 +22,7 @@ L'articolo rappresenta la **naturale continuazione ed espansione sperimentale de
    - **Limite Asintotico Canonico a 0% Fini**: per sabbia pulita ($m_{\mathrm{VG}} \to 1.0$), $D_{EH} \to n_A = 2.05$, recuperando esattamente il valore teorico canonico di Archie per sfere monodisperse non coesive.
 
 2. **Fase 06 e GAP Area: Trattazione Esclusivamente QUALITATIVA (Nessun Calcolo Numerico)**:
+   - Documentata in [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md).
    - **NON calcolare né riportare alcun valore numerico/integrale dell'area GAP ($\Delta_{\mathrm{GAP}}$)**.
    - L'area compresa tra la curva di desaturazione idraulica normalizzata $S_e(h)$ e la curva di conducibilità elettrica normalizzata $\sigma_{\mathrm{norm}}(h)$ (denominata visual `GAP area`) deve essere discussa **esclusivamente come osservazione qualitativa** e come **ipotesi di lavoro fondamentale**.
    - **Ipotesi del Buffering del Doppio Strato Elettrico (EDL Buffering)**: spiegare qualitativamente che la discrepanza tensio-elettrica è governata non solo dalla tessitura, ma dalla presenza di minerali argillosi espandibili (interstratificati Illite/Smectite) che forniscono percorsi di conduzione superficiale, sostenendo la conducibilità elettrica e comprimendo visivamente il GAP.
@@ -98,7 +99,20 @@ L'articolo rappresenta la **naturale continuazione ed espansione sperimentale de
 
 ---
 
-## 4. BIBLIOGRAFIA SELEZIONATA DALLA CARTELLA `Writing/literature`
+## 4. REPORT SPECIALISTICI DI SUPPORTO (CARTELLA `output/reports/`)
+
+L'agente di scrittura può consultare i report analitici dettagliati della pipeline:
+1. [`00_benchmark_lower_layers_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/00_benchmark_lower_layers_report.md): Validazione preliminare anello basale e calibrazione geometrica.
+2. [`01_boyd_2024_empirical_model_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/01_boyd_2024_empirical_model_report.md): Applicazione del modello empirico di Boyd et al. (2024).
+3. [`02_coupled_van_genuchten_archie_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/02_coupled_van_genuchten_archie_report.md): Inversione congiunta van Genuchten–Archie e parametri $n_A, m_{\mathrm{VG}}$.
+4. [`03_normalized_comparison_and_plateau_screening_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/03_normalized_comparison_and_plateau_screening_report.md): Screening dell'anisotropia e confronto normalizzato.
+5. [`04_master_panels_clean_trajectories_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/04_master_panels_clean_trajectories_report.md): Sintesi grafica delle traiettorie pulite.
+6. [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md): **Report chiave di chiusura quantitativa**: formulazione di $D_{EH}$, scaling semi-logaritmico vs frazioni granulometriche e legge universale vs % Fini.
+7. [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md): **Ipotesi di lavoro qualitativa**: GAP visivo, paradosso ML10 vs ML9, EDL buffering e blueprint per `02Carl`.
+
+---
+
+## 5. BIBLIOGRAFIA SELEZIONATA DALLA CARTELLA `Writing/literature`
 
 Utilizza prioritariamente e cita con rigore i seguenti articoli chiave estratti direttamente dall'archivio bibliografico:
 
@@ -126,7 +140,7 @@ Utilizza prioritariamente e cita con rigore i seguenti articoli chiave estratti 
 
 ---
 
-## 5. TABELLE DI RIFERIMENTO E DATI SPERIMENTALI CONVALIDATI
+## 6. TABELLE DI RIFERIMENTO E DATI SPERIMENTALI CONVALIDATI
 
 ### Tabella 1: Sintesi Parametrica e Decoupling Index ($D_{EH}$)
 
@@ -151,7 +165,7 @@ Utilizza prioritariamente e cita con rigore i seguenti articoli chiave estratti 
 
 ---
 
-## 6. FIGURE DI RIFERIMENTO AD ALTA RISOLUZIONE
+## 7. FIGURE DI RIFERIMENTO AD ALTA RISOLUZIONE
 
 Nel redigere il paper, fai riferimento alle seguenti figure generate a 300 DPI pronte per la pubblicazione:
 1. **Figura 1**: Schema della cella multi-elettrodo HYPROP-Geotom e protocollo evaporativo (rimando a *Martino et al., under review*).

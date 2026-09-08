@@ -7,7 +7,13 @@
 Agisci come un ricercatore senior e autore scientifico di primissimo piano nel campo dell'**Idrogeofisica applicata e della Geotecnica/Petrofisica dei terreni insaturi**.
 Il tuo compito è redigere l'articolo scientifico completo basato sui dati sperimentali e sui risultati modellistici della campagna **`Hyprop_geotom_01Carl`** (Fasi da 01 a 06).
 
-L'articolo rappresenta la **naturale continuazione ed espansione sperimentale del lavoro pionieristico di Boyd et al. (2024)** (*"Coupled Hydrogeophysical Modeling to Constrain Unsaturated Soil Water Retention Dynamics"*, *Water Resources Research*), estendendone il framework teorico e l'accoppiamento tensio-elettrico a **carote indisturbate di terreni eterogenei da frana (sito di Carlazzo / Valle di Menaggio)** caratterizzati da diversi scheletri granulometrici e complessi assetti mineralogici.
+L'articolo rappresenta la **naturale continuazione, approfondimento e risposta sperimentale al lavoro cardine di Boyd et al. (2024)**:
+> **Boyd, J., Chambers, J., Wilkinson, P., Peppa, M., Watlet, A., Kirkham, M., ... & Binley, A. (2024)**. *Practical considerations for using petrophysics and geoelectrical methods on clay-rich landslides*. 
+
+Mentre Boyd et al. (2024) hanno evidenziato le problematiche aperte e le limitazioni pratiche nell'applicazione della petrofisica geoelettrica a pendii argillosi instabili (conduzione superficiale, variabilità dell'esponente di Archie $n$, incertezza nella stima dell'umidità e della suzione), il presente studio **fornisce la soluzione metodologica e petrofisica di laboratorio**:
+1. Accoppiamento continuo evaporazione-geoelettrica su carote indisturbate di terreni eterogenei da frana (sito di Carlazzo / Valle di Menaggio).
+2. Formalizzazione dell'**Indice di Disaccoppiamento Elettro-Idraulico ($D_{EH} = n_A / m_{\mathrm{VG}}$)**, che scala universalmente con la frazione fine.
+3. Spiegazione fisica dei meccanismi concorrenti di strozzamento geometrico dei pori limosi e dell'azione tampone (EDL buffering) dei fillosilicati espandibili (smectite).
 
 ---
 
@@ -45,30 +51,30 @@ L'articolo rappresenta la **naturale continuazione ed espansione sperimentale de
 *Coupled Electro-Hydraulic Dynamics in Heterogeneous Landslide Soils: Constraining Unsaturated Desaturation via a Textural Decoupling Index and Smectite Surface Buffering*
 
 ### **1. Introduction**
-- Ruolo dei processi insaturi e della dinamica tensio-elettrica nel monitoraggio dei pendii in frana e dell'infiltrazione.
-- Stato dell'arte dell'idrogeofisica accoppiata: dal modello pionieristico di Boyd et al. (2024) basato su sabbie e mezzi porosi sintetici/semplici alla sfida di suoli naturali eterogenei e coesivi.
-- Il gap di conoscenza: separare l'impatto della strozzatura geometrica dei pori (tortuosità capillare) dall'effetto della conduzione superficiale argillosa durante l'essiccamento continuo.
-- Obiettivo del lavoro e articolazione dell'articolo.
+- Ruolo dei processi idrologici insaturi e della dinamica tensio-elettrica nel monitoraggio dei pendii in frana.
+- Lo stato dell'arte petrofisico per le frane argillose: richiamo al framework e alle problematiche aperte evidenziate da **Boyd et al. (2024)** (*"Practical considerations for using petrophysics and geoelectrical methods on clay-rich landslides"*).
+- I limiti dell'assunzione canonica di Archie ($n=2$, assenza di conduzione di superficie) e la variabilità della risposta geoelettrica durante il prosciugamento in suoli a granulometria mista.
+- L'approccio proposto: caratterizzazione tensio-elettrica continua di laboratorio su carote indisturbate per derivare un indice accoppiato di disaccoppiamento elettro-idraulico.
 
 ### **2. Materials and Geological Setting**
-- Il sito di frana di Carlazzo (Valle di Menaggio, Prealpi Lombarde): contesto geomorfologico, genesi dei depositi colluviali e di versante.
-- Campionamento di carote indisturbate (serie ML): protocollo di prelievo volumetrico non alterato.
-- Caratterizzazione geotecnica e tessiturale (setacciatura, sedimentometria) e classificazione USDA (da Clean Sand a Silty Clay Loam).
-- Mineralogia XRD quantitativa delle polveri e della frazione fine: identificazione di quarzo, feldspati, carbonati e specifica quantificazione dei fillosilicati (illite, clorite, interstratificati illite/smectite I/S ad alto rigonfiamento).
+- Il sito di frana di Carlazzo (Valle di Menaggio, Prealpi Lombarde): inquadramento geologico, geomorfologico e genesi dei corpi di frana.
+- Protocollo di campionamento volumetrico indisturbato (serie ML).
+- Proprietà granulometriche (setacciatura, sedimentometria) e classificazione USDA (dalla sabbia pura a franco-argillo-limoso).
+- Mineralogia XRD quantitativa delle polveri e della frazione argillosa: frazione clastica inerte (quarzo, feldspati, carbonati) vs minerali argillosi e interstratificati Illite/Smectite ad alta superficie specifica.
 
 ### **3. Experimental and Methodological Framework**
 - **3.1 Apparatus for Coupled Evaporation & Geoelectrical Monitoring**:
-  - Principio del metodo evaporativo continuo (Wind/Schindler via HYPROP) integrato con array geoelettrico a 4 elettrodi miniaturizzati ad alta frequenza (Geotom/syscal).
+  - Principio del metodo evaporativo continuo (Wind/Schindler via HYPROP) integrato con array geoelettrico a 4 elettrodi miniaturizzati (Geotom/syscal).
   - Rimando a *Martino et al. (under review)* per la validazione metrologica, la correzione della temperatura (standard $20^\circ\text{C}$ via equazione di Hayashi 2004) e il fattore geometrico d'anello $K_{\mathrm{geom}}$.
 - **3.2 Hydraulic Model Formulation**:
-  - Formulazione classica di van Genuchten (1980) con condizione di Mualem ($m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$).
-  - Valutazione della saturazione efficace $S_e(h) = \frac{\theta(h) - \theta_r}{\theta_s - \theta_r} = [1 + (\alpha h)^{n_{\mathrm{VG}}}]^{-m_{\mathrm{VG}}}$.
+  - Formulazione classica di van Genuchten (1980) con vincolo di Mualem ($m_{\mathrm{VG}} = 1 - 1/n_{\mathrm{VG}}$).
+  - Saturazione efficace $S_e(h) = [1 + (\alpha h)^{n_{\mathrm{VG}}}]^{-m_{\mathrm{VG}}}$.
 - **3.3 Geoelectrical Formulation and Archie Inversion**:
   - Seconda legge di Archie normalizzata: $\sigma_{\mathrm{norm}} = \frac{\sigma(h)}{\sigma_0} = S_e^{n_A}$.
   - Inversione congiunta e calcolo dell'esponente di saturazione apparente $n_A$.
 - **3.4 The Electro-Hydraulic Decoupling Index ($D_{EH}$)**:
   - Definizione formale di $D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$.
-  - Razionale petrofisico: rapporto adimensionale tra la sensibilità alla disconnessione elettrica ($n_A$) e l'ampiezza dello spettro poroso idraulico ($m_{\mathrm{VG}}$).
+  - Significato fisico: rapporto tra la sensibilità alla disconnessione elettrica ($n_A$) e l'ampiezza dello spettro poroso idraulico ($m_{\mathrm{VG}}$).
 
 ### **4. Results**
 - **4.1 Coupled Hydro-Geophysical Evaporation Trajectories**:
@@ -82,20 +88,21 @@ L'articolo rappresenta la **naturale continuazione ed espansione sperimentale de
   - Recupero del benchmark teorico a $0\%$ Fini: $D_{EH} \to 2.05 \approx n_{\mathrm{Archie, canonical}}$.
 
 ### **5. Discussion**
-- **5.1 Textural Drivers of Electro-Hydraulic Decoupling**:
-  - Meccanismo del "sand mitigation": come i grani grossolani mantengono percorsi elettrici aperti riducendo la tortuosità.
-  - Meccanismo della "silt throat bottleneck": come i pori limosi determinano un rapido strozzamento dei colli capillari prima che il corpo del poro si svuoti, facendo impennare $n_A$ e $D_{EH}$.
+- **5.1 Addressing Practical Challenges in Clay-Rich Landslide Petrophysics**:
+  - Come i risultati di questo studio rispondono direttamente alle raccomandazioni pratiche di **Boyd et al. (2024)**: quantificare la deviazione da $n=2$ attraverso la matrice fine del terreno.
+  - Meccanismo del "sand mitigation": lo scheletro sabbioso stabilizza i percorsi di conduzione.
+  - Meccanismo del "silt throat bottleneck": i pori limosi causano una repentina perdita di connettività idrica/elettrica prima dello svuotamento dei pori maggiori.
 - **5.2 The Conceptual GAP Space: Qualitative Smectite EDL Buffering**:
   - Analisi visiva della divergenza nello spazio normalizzato $[0, 1]$ tra $S_e(h)$ e $\sigma_{\mathrm{norm}}(h)$ nei 4 regimi diagnostici.
-  - La risoluzione del paradosso ML10 vs ML9: evidenza qualitativa dell'azione tampone del doppio strato elettrico (EDL) degli interstratificati Illite/Smectite.
+  - Risoluzione del paradosso ML10 vs ML9: l'effetto tampone del doppio strato elettrico (EDL) negli interstratificati Illite/Smectite.
 - **5.3 Implications for Slope-Scale Hydrogeophysical Monitoring**:
-  - Traduzione delle tomografie di resistività elettrica (ERT) da campo in mappe di saturazione e suzione: limiti dell'assunzione di $n_A = 2$ fisso in pendii eterogenei.
+  - Conseguenze pratiche per la conversione di tomografie di resistività (ERT) in mappe di saturazione e suzione nei versanti instabili.
 - **5.4 Limitations and Future Outlook towards `02Carl`**:
   - Limite di cavitazione dei tensiometri ($h \approx 1000 - 1500\ \text{kPa}$) e necessità di misure di resistività terminale residua $\sigma_{\mathrm{res}}$.
-  - Prospettive per la campagna `02Carl`: inversione esplicita di $\sigma_s$ (modelli Waxman-Smits e Revil-Glover) e quantificazione integrata del buffering mineralogico.
+  - Prospettive per la campagna `02Carl`: inversione esplicita di $\sigma_s$ (modelli Waxman-Smits e Revil-Glover) e quantificazione del buffering mineralogico.
 
 ### **6. Conclusions**
-- Sintesi dei risultati chiave: formalizzazione del Decoupling Index $D_{EH}$, validazione della legge universale con i fini, e dimostrazione del ruolo qualitativo dei fillosilicati espandibili.
+- Sintesi dei contributi chiave: formalizzazione del Decoupling Index $D_{EH}$, validazione della legge universale con i fini, e dimostrazione del ruolo qualitativo dei fillosilicati espandibili.
 
 ---
 
@@ -117,26 +124,27 @@ L'agente di scrittura può consultare i report analitici dettagliati della pipel
 Utilizza prioritariamente e cita con rigore i seguenti articoli chiave estratti direttamente dall'archivio bibliografico:
 
 ### A. Modelli di Riferimento Idrogeofisico & Approccio Accoppiato:
-1. **Boyd, J., et al. (2024)**. *Coupled Hydrogeophysical Modeling to Constrain Unsaturated Soil Water Retention Dynamics*. Water Resources Research. *(Paper guida su cui strutturare il presente lavoro)*.
-2. **Uhlemann, S., et al. (2017)**. *Assessment of ground-based monitoring of landslide dynamics using electrical resistivity tomography and geotechnical sensors*. Landslides.
-3. **Whiteley, J. S., et al. (2019)**. *Geophysical monitoring of moisture-induced landslides: a review*. Reviews of Geophysics.
-4. **Perrone, A., et al. (2014)**. *Electrical resistivity tomography for landslide investigations: a review*. Earth-Science Reviews.
+1. **Boyd, J., Chambers, J., Wilkinson, P., Peppa, M., Watlet, A., Kirkham, M., ... & Binley, A. (2024)**. *Practical considerations for using petrophysics and geoelectrical methods on clay-rich landslides*. *(Articolo cardine di cui il presente studio costituisce la naturale continuazione sperimentale e modellistica)*.
+2. **Boyd, J., et al. (2024)**. *Coupled Hydrogeophysical Modeling to Constrain Unsaturated Soil Water Retention Dynamics*. Water Resources Research.
+3. **Uhlemann, S., et al. (2017)**. *Assessment of ground-based monitoring of landslide dynamics using electrical resistivity tomography and geotechnical sensors*. Landslides.
+4. **Whiteley, J. S., et al. (2019)**. *Geophysical monitoring of moisture-induced landslides: a review*. Reviews of Geophysics.
+5. **Perrone, A., et al. (2014)**. *Electrical resistivity tomography for landslide investigations: a review*. Earth-Science Reviews.
 
 ### B. Petrofisica Elettrica, Conduzione Superficiale & Modelli di Conducibilità:
-5. **Archie, G. E. (1942)**. *The electrical resistivity log as an aid in determining some reservoir characteristics*. Transactions of the AIME, 146(01), 54-62.
-6. **Waxman, M. H., & Smits, L. J. M. (1968)**. *Electrical conductivities in oil-bearing shales*. Society of Petroleum Engineers Journal, 8(02), 107-122.
-7. **Revil, A., & Glover, P. W. (1997)**. *Theory of ionic-surface electrical conduction in porous media*. Physical Review B, 55(3), 1757.
-8. **Revil, A., et al. (1998)**. *Streaming potential in porous media: 1. Theory of the zeta potential*. Journal of Geophysical Research: Solid Earth, 103(B9), 20021-20036.
-9. **Hayashi, M. (2004)**. *Temperature-electrical conductivity relation of water for environmental monitoring and geophysical data inversion*. Environmental Monitoring and Assessment, 96(1), 119-128.
+6. **Archie, G. E. (1942)**. *The electrical resistivity log as an aid in determining some reservoir characteristics*. Transactions of the AIME, 146(01), 54-62.
+7. **Waxman, M. H., & Smits, L. J. M. (1968)**. *Electrical conductivities in oil-bearing shales*. Society of Petroleum Engineers Journal, 8(02), 107-122.
+8. **Revil, A., & Glover, P. W. (1997)**. *Theory of ionic-surface electrical conduction in porous media*. Physical Review B, 55(3), 1757.
+9. **Revil, A., et al. (1998)**. *Streaming potential in porous media: 1. Theory of the zeta potential*. Journal of Geophysical Research: Solid Earth, 103(B9), 20021-20036.
+10. **Hayashi, M. (2004)**. *Temperature-electrical conductivity relation of water for environmental monitoring and geophysical data inversion*. Environmental Monitoring and Assessment, 96(1), 119-128.
 
 ### C. Idraulica dei Terreni Insaturi & Metodo Evaporativo:
-10. **van Genuchten, M. T. (1980)**. *A closed-form equation for predicting the hydraulic conductivity of unsaturated soils*. Soil Science Society of America Journal, 44(5), 892-898.
-11. **Durner, W. (1994)**. *Hydraulic conductivity estimation for soils with heterogeneous pore systems*. Water Resources Research, 30(2), 211-223.
-12. **Schindler, U., et al. (2010)**. *Comparison of methods for determining the hydraulic properties of unsaturated soils*. Journal of Plant Nutrition and Soil Science, 173(6), 844-854.
-13. **Peters, A., & Durner, W. (2008)**. *Simplified evaporation method for determining soil hydraulic properties*. Journal of Hydrology, 356(1-2), 147-162.
+11. **van Genuchten, M. T. (1980)**. *A closed-form equation for predicting the hydraulic conductivity of unsaturated soils*. Soil Science Society of America Journal, 44(5), 892-898.
+12. **Durner, W. (1994)**. *Hydraulic conductivity estimation for soils with heterogeneous pore systems*. Water Resources Research, 30(2), 211-223.
+13. **Schindler, U., et al. (2010)**. *Comparison of methods for determining the hydraulic properties of unsaturated soils*. Journal of Plant Nutrition and Soil Science, 173(6), 844-854.
+14. **Peters, A., & Durner, W. (2008)**. *Simplified evaporation method for determining soil hydraulic properties*. Journal of Hydrology, 356(1-2), 147-162.
 
 ### D. Companion Paper per la Fase 00:
-14. **Martino, L., et al. (under review)**. *Design, Geometric Factor Calibration, and Experimental Validation of a Continuous Multi-Electrode Evaporation Cell for Coupled Hydro-Geophysical Characterization of Unsaturated Soils*.
+15. **Martino, L., et al. (under review)**. *Design, Geometric Factor Calibration, and Experimental Validation of a Continuous Multi-Electrode Evaporation Cell for Coupled Hydro-Geophysical Characterization of Unsaturated Soils*.
 
 ---
 

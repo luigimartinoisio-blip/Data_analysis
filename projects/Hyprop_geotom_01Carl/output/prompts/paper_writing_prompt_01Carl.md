@@ -15,6 +15,11 @@ Mentre Boyd et al. (2024) hanno evidenziato le problematiche aperte e le limitaz
 2. Formalizzazione dell'**Indice di Disaccoppiamento Elettro-Idraulico ($D_{EH} = n_A / m_{\mathrm{VG}}$)**, che scala universalmente con la frazione fine.
 3. Spiegazione fisica dei meccanismi concorrenti di strozzamento geometrico dei pori limosi e dell'azione tampone (EDL buffering) dei fillosilicati espandibili (smectite).
 
+> [!IMPORTANT]
+> ### **FONTE UNICA E VINCOLANTE DI VERITÀ METODOLOGICA**
+> **TUTTO ció che riguarda la metodologia, le equazioni matematiche, i protocolli sperimentali, i criteri di screening e le scelte modellistiche DEVE essere rigorosamente ed esclusivamente ricavato dai Report Metodologici specialistici (Fasi 00 – 06) e dal Vademecum metodologico del progetto situati nella cartella `projects/Hyprop_geotom_01Carl/output/reports/`**.
+> L'agente di scrittura non deve inventare assunzioni né utilizzare formulazioni esterne discordanti rispetto a quanto validato e documentato in tali report.
+
 ---
 
 ## 2. REGOLE EPISTEMOLOGICHE E FRONTIERE METODOLOGICHE CRITICHE
@@ -71,7 +76,7 @@ Mentre Boyd et al. (2024) hanno evidenziato le problematiche aperte e le limitaz
   - Saturazione efficace $S_e(h) = [1 + (\alpha h)^{n_{\mathrm{VG}}}]^{-m_{\mathrm{VG}}}$.
 - **3.3 Geoelectrical Formulation and Archie Inversion**:
   - Seconda legge di Archie normalizzata: $\sigma_{\mathrm{norm}} = \frac{\sigma(h)}{\sigma_0} = S_e^{n_A}$.
-  - Inversione congiunta e calcolo dell'esponente di saturazione apparente $n_A$.
+  - Inversione congiunta e calcolo dell'esponente di saturazione apparente $n_A$ sulla porzione inferiore (`geom_lower`, anelli L3 ed L4).
 - **3.4 The Electro-Hydraulic Decoupling Index ($D_{EH}$)**:
   - Definizione formale di $D_{EH} = \frac{n_A}{m_{\mathrm{VG}}}$.
   - Significato fisico: rapporto tra la sensibilità alla disconnessione elettrica ($n_A$) e l'ampiezza dello spettro poroso idraulico ($m_{\mathrm{VG}}$).
@@ -106,14 +111,15 @@ Mentre Boyd et al. (2024) hanno evidenziato le problematiche aperte e le limitaz
 
 ---
 
-## 4. REPORT SPECIALISTICI DI SUPPORTO (CARTELLA `output/reports/`)
+## 4. REPORT SPECIALISTICI E DOCUMENTI METODOLOGICI OBBLIGATORI (CARTELLA `output/reports/`)
 
-L'agente di scrittura può consultare i report analitici dettagliati della pipeline:
-1. [`00_benchmark_lower_layers_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/00_benchmark_lower_layers_report.md): Validazione preliminare anello basale e calibrazione geometrica.
+L'agente di scrittura **DEVE** consultare i report metodologici della pipeline come fonti primarie per estrarre la metodologia e i risultati:
+0. [`vademecum_metodologico_01Carl.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/vademecum_metodologico_01Carl.md): **Quadro metodologico unificato**, metrologia sperimentale e regole di calibrazione.
+1. [`00_benchmark_lower_layers_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/00_benchmark_lower_layers_report.md): Validazione preliminare della porzione inferiore (L3 ed L4, `geom_lower`) e calibrazione geometrica.
 2. [`01_boyd_2024_empirical_model_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/01_boyd_2024_empirical_model_report.md): Applicazione del modello empirico di Boyd et al. (2024).
-3. [`02_coupled_van_genuchten_archie_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/02_coupled_van_genuchten_archie_report.md): Inversione congiunta van Genuchten–Archie e parametri $n_A, m_{\mathrm{VG}}$.
-4. [`03_normalized_comparison_and_plateau_screening_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/03_normalized_comparison_and_plateau_screening_report.md): Screening dell'anisotropia e confronto normalizzato.
-5. [`04_master_panels_clean_trajectories_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/04_master_panels_clean_trajectories_report.md): Sintesi grafica delle traiettorie pulite.
+3. [`02_coupled_van_genuchten_archie_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/02_coupled_van_genuchten_archie_report.md): Inversione congiunta van Genuchten–Archie e stima di $n_A, m_{\mathrm{VG}}$ su `geom_lower`.
+4. [`03_normalized_comparison_and_plateau_screening_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/03_normalized_comparison_and_plateau_screening_report.md): Screening dell'anisotropia, indice di ritardo $\Lambda_{\mathrm{EC}}$ e confronto normalizzato.
+5. [`04_master_panels_clean_trajectories_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/04_master_panels_clean_trajectories_report.md): Sintesi grafica delle traiettorie pulite normalizzate $[0, 1]$.
 6. [`05_electro_hydraulic_decoupling_index_report.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/05_electro_hydraulic_decoupling_index_report.md): **Report chiave di chiusura quantitativa**: formulazione di $D_{EH}$, scaling semi-logaritmico vs frazioni granulometriche e legge universale vs % Fini.
 7. [`06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md`](file:///c:/Users/luigi/git/github.com/luigimartinoisio-blip/Data_analysis/projects/Hyprop_geotom_01Carl/output/reports/06_ipotesi_finale_revisionata_e_protocollo_futuri_esperimenti.md): **Ipotesi di lavoro qualitativa**: GAP visivo, paradosso ML10 vs ML9, EDL buffering e blueprint per `02Carl`.
 
